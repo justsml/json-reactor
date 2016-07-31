@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='UTF-8'>
+    <title>JSON Editor Widget</title>
+    <meta name="robots" content="noindex">
+    <link rel='stylesheet' href='./style.css?nocache'>
+    <link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
+    <style type="text/css">
+      /* initial css from parent app - setup to prevents FOUC while loading */
+      .results-view { width: 720px; border: 1px solid #333; margin: 0 auto; }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="well well-sm text-center">
+        <h2>
+          JSON Editor Widget
+          <div class="small">Pure JavaScript - Framework Agnostic</div>
+        </h2>
+        <div class="btn-group">
+          <div id='start' onclick="init()" class="btn btn-success">Init</div>
+          <div id='destroy' onclick="jsonEditor.destroy()" class="btn btn-danger">Destroy</div>
+        </div>
+      </div>
+      <div class="text-center">
+        <div class="results-view">
+        </div>
+      </div>
+    </div>
+    <script src='../dist/json-editor.bundle.js?cache=not-now'></script>
+    <script>
+      var jsonEditor;
+      const config = {
+        selection: true,
+        sorting: true,
+        defaultSort: 'name',
+        columns: [
+          {selection: true, multiple: true, toggleAll: true, classes: ['text-center', 'tbl-xs-2']},
+          {title: 'Name',   render: 'name', cols: 4},
+          {title: 'Number', render: 'number'},
+          {title: 'Region', render: 'region'},
+          {title: 'Type', sort: 'type', render: ({row}) => row.type && row.type.toLowerCase() || 'N/A'},
+        ],
+        data: Promise.resolve([1, 2, 3, 4, 5])
+      };
+      function init() {
+        jsonEditor = JsonEditor.create(document.querySelector('.results-view'), config)
+      }
+      setTimeout(init, 250)
+    </script>
+  </body>
+
+</html>
+
