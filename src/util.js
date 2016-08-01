@@ -85,6 +85,22 @@ export const closest = (elem, selector, limit = null) => {
 }
 
 /**
+ * toBool converts anything to a boolean - see code for details
+ */
+export const toBool = (str) => {
+  if (typeof str === 'boolean') {
+    return str
+  }
+
+  if (typeof str === 'string') {
+    str = (str.length >= 1 ? str.toUpperCase()[0] : str)
+    return ['Y', '1', 'T'].indexOf(str) === 0
+  }
+
+  return str ? true : false
+}
+
+/**
  * Warning: Private/local use only. Do not hoist.
  * *** Unsafe HTML/string handling ***
  */
