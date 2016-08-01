@@ -1,6 +1,6 @@
-# power-table
+# json editor
 
-> Table Grid Component/Widget in ES6.
+> JSON Object Editor
 **Pure Javascript.**
 *That uncut sh*t.*
 

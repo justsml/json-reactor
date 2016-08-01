@@ -1,5 +1,6 @@
 import {config}              from './config'
 import {createElem, closest, removeAll, Styles} from './util'
+import {arrows, ux}          from './svg-icons'
 
 export function KeyList({data, parent, depth = 0}) {
   const list = createElem('<ul class="j-keys" depth="' + depth + '"></ul>')
@@ -9,12 +10,12 @@ export function KeyList({data, parent, depth = 0}) {
     .keys(data)
     .forEach((key, idx, arr) => {
       const valueType   = Array.isArray(data[key]) ? 'array' : typeof data[key]
-      const icon        = valueType === 'object' ? 
-                      'plus' : valueType === 'array' ?
-                      'list' : valueType === 'string' ? 
-                      'text' : 'default'
+      const icon        =            valueType === 'object' ? 
+                      arrows.down  : valueType === 'array' ?
+                      ux.list      : valueType === 'string' ? 
+                      ux.edit      : ux.editLine
       const expandable  = valueType === 'object' ? 'j-expandable' : ''
-      const row = createElem(['<li class="j-closed ', expandable, ' j-icon-', icon, ' j-type-', valueType, '" key="', key, '">', key, '</li>'].join(''))
+      const row = createElem(['<li class="j-closed ', expandable, ' j-type-', valueType, '" key="', key, '">', icon, ' ', key, '</li>'].join(''))
       console.warn('row', row, valueType, icon)
       list.appendChild(row)
     })
