@@ -75,11 +75,13 @@ export function getId({id, _id, key}) { return id || _id || key; }
 /**
  * 
  */
-export const closest = (elem, selector) => {
+export const closest = (elem, selector, limit = null) => {
+  if (limit !== null && limit <= 0) { return false }
+
   return !elem ? null
          : elem.matches && elem.matches(selector) 
          ? elem : elem.classList && elem.classList.contains(selector)
-         ? elem : closest(elem.parentNode, selector)
+         ? elem : closest(elem.parentNode, selector, (limit !== null ? limit - 1 : limit))
 }
 
 /**

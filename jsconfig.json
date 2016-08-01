@@ -9,6 +9,7 @@
 		"node_modules",
 		"bower_components",
 		"jspm_packages",
+		"dist",
 		"tmp",
 		"temp"
 	]

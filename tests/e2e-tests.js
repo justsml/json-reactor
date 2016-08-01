@@ -21,9 +21,9 @@ casper.test.begin('has created JsonEditor', 3, function (test) {
 
   casper.start('http://0.0.0.0:1337/tests/index.html', function () {
     this.echo('Loaded')
-  }).waitForText('Table', function () {
-    test.assertTextExists('Table', 'page body contains "Table"')
-    // this.echo('page body contains "Table"')
+  }).waitForText('Editor', function () {
+    test.assertTextExists('Editor', 'page body contains "Editor"')
+    // this.echo('page body contains "Editor"')
   }).waitUntilVisible('.json-editor',
     function _then() { this.echo('Has json-editor loaded...') },
     function _failed() { this.echo('Has json-editor loaded...') }, 6000);
