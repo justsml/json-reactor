@@ -1,8 +1,8 @@
-import {createElem, closest, removeAll, removeNode, toBool} from './util'
-  
-export function FieldEditor({key, node, parent, path, elem, type = 'string', depth = 0}) {
+import { createElem, closest, removeAll, removeNode, toBool } from './util'
 
-  const form = createElem(`<section class="j-edit j-side" key="${key}" type="${type}" depth="${depth}" path="${Array.isArray(path) ? path.join('::') : path }">
+export function FieldEditor({ key, node, parent, path, elem, type = 'string', depth = 0 }) {
+
+  const form = createElem(`<section class="j-edit j-side" key="${key}" type="${type}" depth="${depth}" path="${Array.isArray(path) ? path.join('::') : path}">
     <form class="field-editor">
       <fieldset>
         <label>Name</label>
@@ -33,17 +33,17 @@ export function FieldEditor({key, node, parent, path, elem, type = 'string', dep
   var value         = node[key]
   const prevVals    = {}
   const getValue    = () => getValueFld().value
-  const getValueFld = () => form.querySelector('.field-value') || {value: false}
+  const getValueFld = () => form.querySelector('.field-value') || { value: false }
   const fldName     = form.querySelector('input[name="name"]')
   const fldType     = form.querySelector('select[name="type"]')
   const placeholder = form.querySelector('.valueEditorPlaceholder')
-// initialize value tracker (for local 'type' changes)
+  // initialize value tracker (for local 'type' changes)
   prevVals[type]    = value
 
-// set value w/ default
+  // set value w/ default
   fldType.value     = type
 
-// define helpers, e.g. build field, transition state (aka convert)
+  // define helpers, e.g. build field, transition state (aka convert)
   const getValueFieldElem = (_value = getValue()) => {
     console.trace('   \tGenField(', key, ', ', _value, ')')
     if (fldType.value === 'string') {
@@ -51,13 +51,13 @@ export function FieldEditor({key, node, parent, path, elem, type = 'string', dep
     } else if (fldType.value === 'number') {
       return createElem(`<input type='number' class='field-value' name='field-value' value='${_value}' />`)
     } else if (fldType.value === 'boolean') {
-      return createElem(`<input type='checkbox' class='field-value' name='field-value' value='checked'${_value ? " checked" : ""}' />`)
+      return createElem(`<input type='checkbox' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
     } else {
       return createElem(`<span class="has-error"><input type='text' class='field-value' name='field-value' value='${_value}' /></span>`)
     }
   }
 
-  const convert = ({value, type}) => {
+  const convert = ({ value, type }) => {
     const currType = Array.isArray(value) ? 'array' : typeof value
     switch (type) {
       case 'string': return value.toString()
@@ -73,35 +73,38 @@ export function FieldEditor({key, node, parent, path, elem, type = 'string', dep
         break
       case 'boolean':
         return toBool(value)
-            
-    // } else if (type === 'number') {
-    // } else if (type === 'array') {
-    // } else if (type === 'object') {
+
+      // } else if (type === 'number') {
+      // } else if (type === 'array') {
+      // } else if (type === 'object') {
     }
   }
+
   const updateValueField = (v) => {
     const newType = fldType.value
-    const newVal  = convert({value: v || getValue(), type: newType})
+    const newVal  = convert({ value: v || getValue(), type: newType })
     const newFld  = getValueFieldElem(newVal)
     removeAll(placeholder.childNodes)
     placeholder.appendChild(newFld)
     return newFld
   }
 
-// define events, onTypeChanged, onSave, onCancel
-  const onTypeChanged = ({target}) => {
+  // define events, onTypeChanged, onSave, onCancel
+  const onTypeChanged = ({ target }) => {
     console.warn('Type Changed!!', arguments)
     const newType = fldType.value
     const oldVal  = getValue()
     updateValueField()
   }
+
   const onSave = (e) => {
-    const {target, detail, preventDefault} = e;
+    const { target, detail, preventDefault } = e;
     console.warn('Saved!!', arguments)
     preventDefault()
 
   }
-  const onCancel = ({target}) => {
+
+  const onCancel = ({ target }) => {
     console.warn('Cancelled!!', arguments)
 
   }
@@ -117,13 +120,14 @@ export function FieldEditor({key, node, parent, path, elem, type = 'string', dep
     form.querySelector('button[type="submit"]').removeEventListener('click', onSave)
     form.querySelector('button[type="reset"]').removeEventListener('click', onCancel)
     fldType.removeEventListener('change', onTypeChanged)
+    removeNode(form)
 
   }
 
   setup()
-  
+
   // init UI
   updateValueField(value)
 
-  return Object.assign(form, {destroy})
+  return Object.assign(form, { destroy })
 }

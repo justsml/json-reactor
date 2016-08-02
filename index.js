@@ -8,6 +8,16 @@ export function create(elem, config) {
   
   Styles.add()
 
+  const destroy = () => {
+    const currForm = elem.querySelector('section.j-edit')
+    if (currForm && typeof currForm.destroy === 'function') {
+      currForm.destroy()
+    }
+    if (keyList && typeof keyList.destroy === 'function') {
+      keyList.destroy()
+    }
+  }
+
   const _handleSelect = ({target, detail}) => {
     console.warn('SELECT', detail, target)
     const currForm = elem.querySelector('section.j-edit')
@@ -26,12 +36,12 @@ export function create(elem, config) {
     }
     elem.appendChild(editor)
   }
-  let treeSection = document.createElement('section')
-  let keyList = KeyList({data: config})
+  const treeSection = document.createElement('section')
+  const keyList = KeyList({data: config})
   keyList.addEventListener('selected', _handleSelect)
   treeSection.appendChild(keyList)
   treeSection.classList.add('j-side')
   elem.appendChild(treeSection)
   elem.classList.add('json-editor')
-  return keyList;
+  return {destroy};
 }

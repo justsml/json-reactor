@@ -71,7 +71,7 @@
     "allExcept": "firstAfterCurly"
   },
   "requirePaddingNewLinesAfterBlocks": true,
-  "requireSemicolons": true,
+  "requireSemicolons": false,
   "requireShorthandArrowFunctions": true,
   "requireSpacesInsideImportedObjectBraces": true,
   "safeContextKeyword": "_this",
@@ -79,7 +79,7 @@
   "validateQuoteMarks": { "mark": "'", "escape": true, "ignoreJSX": true },
   "validateIndentation": 2,
   "maximumLineLength": {
-    "value": 120,
-    "allExcept": ["urlComments"]
+    "value": 400,
+    "allExcept": ["comments", "urlComments"]
   }
 }

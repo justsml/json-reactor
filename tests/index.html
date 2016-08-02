@@ -25,6 +25,13 @@
           <div id='destroy' onclick="jsonEditor.destroy()" class="btn btn-danger">Destroy</div>
         </div>
       </div>
+
+      <div class="well well-sm text-center">
+        <div class="json-data-view">
+          <textarea class='json-string' rows='6'></textarea>
+        </div>
+      </div>
+
       <div class="text-center">
         <div class="results-view">
         </div>
@@ -50,6 +57,8 @@
         const jsonText    = document.querySelector('.json-string')
         const jsonInput   = jsonText && jsonText.value && jsonText.value.length > 5 ? JSON.parse(jsonText.value) : config
         jsonEditor  = JsonEditor.create(document.querySelector('.results-view'), jsonInput)
+        const txt = document.querySelector('textarea.json-string')
+        txt.value = JSON.stringify(jsonInput, null, 2)
       }
       setTimeout(init, 250)
     </script>

@@ -30,6 +30,7 @@ export function getSorter(key) {
     key = key.substr(1);
     return _englishSortReversed;
   }
+
   return _englishSort;
 }
 
@@ -47,10 +48,11 @@ export const Styles = {
       document.head.appendChild(css)
     }
   },
+
   remove: () => {
     let css = document.querySelector('style#json-editor')
     if (css && css.parentNode) { css.parentNode.removeChild(css) }
-  }
+  },
 }
 
 /**
@@ -82,22 +84,23 @@ export function removeNode(node) {
   if (node.parentNode && node.parentNode.removeChild) {
     node.parentNode.removeChild(node)
   }
+
   return node
 }
 
 /**
  * Totes obvi
  */
-export function getId({id, _id, key}) { return id || _id || key; }
+export function getId({ id, _id, key }) { return id || _id || key; }
 
 /**
- * 
+ *
  */
 export const closest = (elem, selector, limit = null) => {
   if (limit !== null && limit <= 0) { return false }
 
   return !elem ? null
-         : elem.matches && elem.matches(selector) 
+         : elem.matches && elem.matches(selector)
          ? elem : elem.classList && elem.classList.contains(selector)
          ? elem : closest(elem.parentNode, selector, (limit !== null ? limit - 1 : limit))
 }

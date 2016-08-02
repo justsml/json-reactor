@@ -10,7 +10,7 @@ div.json-editor {
 section.j-side {
   display:  inline-block;
   width:    50%;
-  margin:   auto;
+  margin:   10px auto;
   padding:  20px 0px; 
 }
 
@@ -24,4 +24,9 @@ section.j-side {
   background-color: #CCC;
   color: #333;
 
+}
+
+textarea.json-string {
+  width: 100%;
+  font-family: 'Droid Mono', 'Courier', monospace;
 }
