@@ -1,3 +1,4 @@
+// jscs:disable safeContextKeyword
 
 /**
  * Utility arrayify method

@@ -1,5 +1,5 @@
 import { config }                         from './config'
-import { createElem, closest, 
+import { createElem, closest,
           removeAll, removeNode } from './util'
 import { arrows, ux }                     from './svg-icons'
 import { CustomEvent as _CustomEvent }    from './custom-event'
