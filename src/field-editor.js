@@ -1,8 +1,8 @@
-import {createElem, closest, removeAll, toBool} from './util'
+import {createElem, closest, removeAll, removeNode, toBool} from './util'
   
 export function FieldEditor({key, node, parent, path, elem, type = 'string', depth = 0}) {
 
-  const form = createElem(`<section class="j-edit" depth="${depth}" path="${Array.isArray(path) ? path.join('') : path }">
+  const form = createElem(`<section class="j-edit j-side" key="${key}" type="${type}" depth="${depth}" path="${Array.isArray(path) ? path.join('::') : path }">
     <form class="field-editor">
       <fieldset>
         <label>Name</label>
@@ -20,7 +20,7 @@ export function FieldEditor({key, node, parent, path, elem, type = 'string', dep
       </fieldset>
       <fieldset>
         <label>Value</label>
-        <div class="valueEditorPlaceholder">placeholder for real values</div>
+        <div class="valueEditorPlaceholder"></div>
       </fieldset>
       <fieldset>
         <button type="submit">Save</button>
@@ -33,19 +33,19 @@ export function FieldEditor({key, node, parent, path, elem, type = 'string', dep
   var value         = node[key]
   const prevVals    = {}
   const getValue    = () => getValueFld().value
-  const getValueFld = () => form.querySelector('.field-value')
+  const getValueFld = () => form.querySelector('.field-value') || {value: false}
   const fldName     = form.querySelector('input[name="name"]')
   const fldType     = form.querySelector('select[name="type"]')
-  const placehold   = form.querySelector('.valueEditorPlaceholder')
+  const placeholder = form.querySelector('.valueEditorPlaceholder')
 // initialize value tracker (for local 'type' changes)
   prevVals[type]    = value
 
 // set value w/ default
   fldType.value     = type
 
-// define helpers, e.g. build field, transition state
-  const getValueFieldElem = () => {
-    let _value = getValue()
+// define helpers, e.g. build field, transition state (aka convert)
+  const getValueFieldElem = (_value = getValue()) => {
+    console.trace('   \tGenField(', key, ', ', _value, ')')
     if (fldType.value === 'string') {
       return createElem(`<input type='text' class='field-value' name='field-value' value='${_value}' />`)
     } else if (fldType.value === 'number') {
@@ -65,10 +65,10 @@ export function FieldEditor({key, node, parent, path, elem, type = 'string', dep
       case 'number':
         switch (currType) {
           case 'string': return parseFloat(value)
-          case 'string': return parseFloat(value)
-          case 'string': return parseFloat(value)
-          case 'string': return parseFloat(value)
-          default:       return value
+          case 'boolean': return value ? 1 : 0
+          case 'array': return -1
+          case 'object': return -1
+          default:       return -99
         }
         break
       case 'boolean':
@@ -79,25 +79,51 @@ export function FieldEditor({key, node, parent, path, elem, type = 'string', dep
     // } else if (type === 'object') {
     }
   }
+  const updateValueField = (v) => {
+    const newType = fldType.value
+    const newVal  = convert({value: v || getValue(), type: newType})
+    const newFld  = getValueFieldElem(newVal)
+    removeAll(placeholder.childNodes)
+    placeholder.appendChild(newFld)
+    return newFld
+  }
 
 // define events, onTypeChanged, onSave, onCancel
   const onTypeChanged = ({target}) => {
-    console.warn('Saved!!', arguments)
-    const newType = target.value
-    
+    console.warn('Type Changed!!', arguments)
+    const newType = fldType.value
+    const oldVal  = getValue()
+    updateValueField()
   }
-  const onSave = ({target, detail, preventDefault}) => {
+  const onSave = (e) => {
+    const {target, detail, preventDefault} = e;
     console.warn('Saved!!', arguments)
     preventDefault()
 
   }
   const onCancel = ({target}) => {
     console.warn('Cancelled!!', arguments)
+
   }
 
-  form.querySelector('button[type="submit"]').addEventListener('click', onSave)
-  form.querySelector('button[type="reset"]').addEventListener('click', onCancel)
-  fldType.addEventListener('change', onTypeChanged)
+  const setup = () => {
+    // Setup events
+    form.querySelector('button[type="submit"]').addEventListener('click', onSave)
+    form.querySelector('button[type="reset"]').addEventListener('click', onCancel)
+    fldType.addEventListener('change', onTypeChanged)
+  }
+
+  const destroy = () => {
+    form.querySelector('button[type="submit"]').removeEventListener('click', onSave)
+    form.querySelector('button[type="reset"]').removeEventListener('click', onCancel)
+    fldType.removeEventListener('change', onTypeChanged)
+
+  }
+
+  setup()
   
-  return form
+  // init UI
+  updateValueField(value)
+
+  return Object.assign(form, {destroy})
 }

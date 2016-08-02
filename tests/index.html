@@ -34,7 +34,7 @@
     <script>
       var jsonEditor;
       const config = {
-        selection: true,
+        selection: false,
         sorting: true,
         defaultSort: 'name',
         columns: [
@@ -47,7 +47,9 @@
         data: Promise.resolve([1, 2, 3, 4, 5])
       };
       function init() {
-        jsonEditor = JsonEditor.create(document.querySelector('.results-view'), config)
+        const jsonText    = document.querySelector('.json-string')
+        const jsonInput   = jsonText && jsonText.value && jsonText.value.length > 5 ? JSON.parse(jsonText.value) : config
+        jsonEditor  = JsonEditor.create(document.querySelector('.results-view'), jsonInput)
       }
       setTimeout(init, 250)
     </script>

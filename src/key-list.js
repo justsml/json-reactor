@@ -5,7 +5,7 @@ import {CustomEvent as _CustomEvent}    from './custom-event'
 // _CustomEvent should auto-attach the object to the window... if not make init function
 
 
-export function KeyList({data, parent, depth = 0}) {
+export function KeyList({data, parent, path = [], depth = 0}) {
   const list = createElem('<ul class="j-keys" depth="' + depth + '"></ul>')
   Object
     .keys(data)
@@ -16,16 +16,21 @@ export function KeyList({data, parent, depth = 0}) {
                       ux.list      : valueType === 'string' ? 
                       ux.edit      : ux.edit
       const expandable  = valueType === 'object' ? 'j-expandable' : ''
+      let rowPath = [].slice.call(path).push(key + (valueType === 'array' ? '[' : valueType === 'object' ? '.' : ''))
       const row = createElem(['<li depth="', depth+1, '" class="j-closed ', expandable, ' j-type-', valueType, '" key="', key, '">', icon, ' ', key, '</li>'].join(''))
-      console.warn('row', row, valueType, icon)
+      Object.assign(row, {node: data, key: key, type: valueType, path: rowPath, value: data[key]})
+      // console.warn('row', row, valueType, icon)
       list.appendChild(row)
     })
-  list.addEventListener('click', event => {
-    const li = closest(event.target, 'li', 2)
+  const _clickHandler = (e) => {
+    const {preventDefault, target} = e
+    const li = closest(target, 'li', 2)
     if (li) {
-      event.preventDefault()
-      const key       = li.getAttribute('key')
-      const nextData  = data[key]
+      e.preventDefault()
+      const {node, key, type, path, value} = li
+
+      // const key       = li.getAttribute('key')
+      const nextData  = node[key]
       console.warn('CANCELLED click for %s', key, li)
       const isObject = li.classList.contains('j-type-object')
       const isArray  = li.classList.contains('j-type-array')
@@ -50,6 +55,13 @@ export function KeyList({data, parent, depth = 0}) {
 
       console.info('_clicked.toggled', key, li)
     }
-  })
-  return list
+  }
+  const destroy = () => {
+    list.removeEventListener('click', _clickHandler)
+  }
+  if (!parent) {
+    // add only at top of tree, maybe move out of here up a 'layer'
+    list.addEventListener('click', _clickHandler)
+  }
+  return Object.assign(list, {destroy})
 }

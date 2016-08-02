@@ -1,1 +1,27 @@
 /* test/extra css rules go here */
+div.json-editor {
+  display: flex;
+  flex: 0 1 auto;
+  justify-content: space-between;
+  flex-flow: row nowrap;
+
+}
+
+section.j-side {
+  display:  inline-block;
+  width:    50%;
+  margin:   auto;
+  padding:  20px 0px; 
+}
+
+.j-keys li {
+  cursor: pointer;
+}
+
+.j-keys li:hover {
+  text-decoration: underline;
+  font-style: italic;
+  background-color: #CCC;
+  color: #333;
+
+}

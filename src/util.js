@@ -68,6 +68,24 @@ export function removeAll(node) {
 }
 
 /**
+ * Accepts Element / Node ish objects (i.e. from `document.querySelector`)
+ *
+ * Only removes @node **if it has a valid `parentNode` context**
+ *
+ * Alternate usage, prototype of Node:
+ * `Node.prototype.removeNode = removeNode;`
+ *
+ */
+export function removeNode(node) {
+  if (this instanceof Node) { node = this; }
+
+  if (node.parentNode && node.parentNode.removeChild) {
+    node.parentNode.removeChild(node)
+  }
+  return node
+}
+
+/**
  * Totes obvi
  */
 export function getId({id, _id, key}) { return id || _id || key; }
