@@ -51,7 +51,13 @@
           {title: 'Region', render: 'region'},
           {title: 'Type', sort: 'type', render: ({row}) => row.type && row.type.toLowerCase() || 'N/A'},
         ],
-        data: Promise.resolve([1, 2, 3, 4, 5])
+        metadata: {
+          foo: 'bar', 
+          bar: 'foo',
+          baz: 'zab',
+          sequence: [1, 2, 3, 4, 5], 
+          abcs: 'abcdefg'.split('')
+        }
       };
       function init() {
         const jsonText    = document.querySelector('.json-string')

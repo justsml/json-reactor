@@ -32,7 +32,7 @@ export function KeyList({ data, parent, path = [], depth = 0 }) {
       const isObject = li.classList.contains('j-type-object')
       const isArray  = li.classList.contains('j-type-array')
       console.warn('CANCELLED click for %s', key, 'isObject=', isObject, 'isArray=', isArray, 'elem=', li)
-      if (isObject || isArray) {
+      if (isObject) {
         if (!li.querySelector('ul')) {
           // do recursion, on demand
           li.appendChild(KeyList({ data: nextData, parent: li, depth: depth + 1 }))

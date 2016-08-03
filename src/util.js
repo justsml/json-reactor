@@ -130,5 +130,5 @@ export const createElem = html => {
   const container = document.createDocumentFragment()
   const div = document.createElement('div')
   div.innerHTML = html // Potential Security Exploit Vector!!!!!!
-  return div.childNodes.length === 1 ? div.childNodes[0] : div
+  return div.children.length === 1 ? div.children[0] : div
 }

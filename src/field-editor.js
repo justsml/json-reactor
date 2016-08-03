@@ -2,7 +2,7 @@ import { createElem, closest, removeAll, removeNode, toBool } from './util'
 
 export function FieldEditor({ key, node, parent, path, elem, type = 'string', depth = 0 }) {
 
-  const form = createElem(`<section class="j-edit j-side" key="${key}" type="${type}" depth="${depth}" path="${Array.isArray(path) ? path.join('::') : path}">
+  const form = createElem(`<section class="j-edit j-side text-left" key="${key}" type="${type}" depth="${depth}" path="${Array.isArray(path) ? path.join('::') : path}">
     <form class="field-editor">
       <fieldset>
         <label>Name</label>
@@ -44,13 +44,28 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
   fldType.value     = type
 
   // define helpers, e.g. build field, transition state (aka convert)
-  const getValueFieldElem = (_value = getValue()) => {
+  const getValueFieldElem = (_value = getValue(), renderArrays = true) => {
     console.trace('   \tGenField(', key, ', ', _value, ')')
+    const basicTypes = ['string', 'number', 'boolean']
+
     if (fldType.value === 'string') {
       return createElem(`<input type='text' class='field-value' name='field-value' value='${_value}' />`)
     } else if (fldType.value === 'number') {
       return createElem(`<input type='number' class='field-value' name='field-value' value='${_value}' />`)
     } else if (fldType.value === 'boolean') {
+      return createElem(`<input type='checkbox' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
+    } else if (fldType.value === 'array' && renderArrays) {
+      return _value.reduce((elem, val, idx) => {
+        let li = createElem(`<li idx="${idx}">${val}: </li>`)
+        // see if type of array items is simple enough to show value/input field
+        if (basicTypes.indexOf(typeof val) <= -1) {
+          li.appendChild(createElem(`<pre>${JSON.stringify(val, null, 2)}</pre>`))
+        } else {
+          li.appendChild(getValueFieldElem(val, false))
+        }
+        elem.appendChild(li)
+        return elem
+      }, document.createElement('ul'))
       return createElem(`<input type='checkbox' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
     } else {
       return createElem(`<span class="has-error"><input type='text' class='field-value' name='field-value' value='${_value}' /></span>`)
@@ -73,10 +88,8 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
         break
       case 'boolean':
         return toBool(value)
-
-      // } else if (type === 'number') {
-      // } else if (type === 'array') {
-      // } else if (type === 'object') {
+      case 'array': return []
+      case 'object': return {}
     }
   }
 
@@ -84,7 +97,7 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
     const newType = fldType.value
     const newVal  = convert({ value: v || getValue(), type: newType })
     const newFld  = getValueFieldElem(newVal)
-    removeAll(placeholder.childNodes)
+    removeAll(placeholder.children)
     placeholder.appendChild(newFld)
     return newFld
   }
@@ -99,8 +112,31 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
 
   const onSave = (e) => {
     const { target, detail, preventDefault } = e;
-    console.warn('Saved!!', arguments)
-    preventDefault()
+    const oldName = key, 
+          newName = fldName.value,
+          oldType = type, 
+          newType = fldType.value,
+          oldValue = value,
+          newValue = getValue()
+    const nameChanged  = oldName  !== newName,
+          typeChanged  = oldType  !== newType,
+          valueChanged = oldValue !== newValue
+    const changed = nameChanged || typeChanged || valueChanged
+
+    e.preventDefault()
+
+    if (changed) {
+      console.warn(`Saving changes... (${oldName}:${oldValue} => ${newName}:${newValue}) nameChanged=${nameChanged} typeChanged=${typeChanged} valueChanged=${valueChanged} \nArgs=\n`, arguments)     
+      if (nameChanged) {
+        node[newName] = newValue
+        delete node[oldName]
+      } else if (valueChanged) {
+        node[newName] = newValue
+      }
+    } else {
+      console.warn(`Nothing changed`)
+    }
+
 
   }
 
