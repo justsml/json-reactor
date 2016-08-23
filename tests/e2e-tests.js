@@ -1,5 +1,5 @@
 //const casper = require('casper').create()
-const URL = 'http://0.0.0.0:1337/tests/index.html'
+const URL = 'http://0.0.0.0:1338/tests/index.html'
 const VIEWPORT = {
   top: 0,
   left: 0,
@@ -19,7 +19,7 @@ casper.test.begin('has created JsonEditor', 3, function (test) {
   //   this.die("Complete callback has failed: " + err);
   // });
 
-  casper.start('http://0.0.0.0:1337/tests/index.html', function () {
+  casper.start('http://0.0.0.0:1338/tests/index.html', function () {
     this.echo('Loaded')
   }).waitForText('Editor', function () {
     test.assertTextExists('Editor', 'page body contains "Editor"')

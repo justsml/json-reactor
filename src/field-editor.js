@@ -44,9 +44,10 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
   fldType.value     = type
 
   // define helpers, e.g. build field, transition state (aka convert)
+  const basicTypes = ['string', 'number', 'boolean']
+
   const getValueFieldElem = (_value = getValue(), renderArrays = true) => {
     console.trace('   \tGenField(', key, ', ', _value, ')')
-    const basicTypes = ['string', 'number', 'boolean']
 
     if (fldType.value === 'string') {
       return createElem(`<input type='text' class='field-value' name='field-value' value='${_value}' />`)
@@ -73,10 +74,18 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
   }
 
   const convert = ({ value, type }) => {
+    const jsonPattern = /^\s*(\{|\[).*(\]|\})\s*$/g;
+    const isJson = s => jsonPattern.test(s)
     const currType = Array.isArray(value) ? 'array' : typeof value
     switch (type) {
-      case 'string': return value.toString()
-      // default: return value.toString()
+      case 'string':
+        switch (currType) {
+          case 'string':  return value
+          case 'boolean': return value
+          case 'array':   return typeof value[0] === 'string' ? value.join('\t') : JSON.stringify(value)
+          case 'object':  return JSON.stringify(value)
+          default:        return value
+        }
       case 'number':
         switch (currType) {
           case 'string': return parseFloat(value)
@@ -85,12 +94,27 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
           case 'object': return -1
           default:       return -99
         }
-        break
       case 'boolean':
         return toBool(value)
-      case 'array': return []
-      case 'object': return {}
+      case 'array':
+        switch (currType) {
+          case 'string': return isJson(value) ? JSON.parse(value) : value.split(/\s+/)
+          case 'boolean': return [value]
+          case 'array': return value
+          case 'object': return [value]
+          default:       return []
+        }
+      case 'object':
+        switch (currType) {
+          case 'string': return isJson(value) ? JSON.parse(value) : {value}
+          case 'boolean': return {value}
+          case 'array': return {value}
+          case 'object': return value
+          default:       return {}
+        }
     }
+    console.error('Failed to Match Type: ', type, currType, value);
+    return value;
   }
 
   const updateValueField = (v) => {
@@ -112,9 +136,9 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
 
   const onSave = (e) => {
     const { target, detail, preventDefault } = e;
-    const oldName = key, 
+    const oldName = key,
           newName = fldName.value,
-          oldType = type, 
+          oldType = type,
           newType = fldType.value,
           oldValue = value,
           newValue = getValue()
@@ -126,7 +150,7 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
     e.preventDefault()
 
     if (changed) {
-      console.warn(`Saving changes... (${oldName}:${oldValue} => ${newName}:${newValue}) nameChanged=${nameChanged} typeChanged=${typeChanged} valueChanged=${valueChanged} \nArgs=\n`, arguments)     
+      console.warn(`Saving changes... (${oldName}:${oldValue} => ${newName}:${newValue}) nameChanged=${nameChanged} typeChanged=${typeChanged} valueChanged=${valueChanged} \nArgs=\n`, arguments)
       if (nameChanged) {
         node[newName] = newValue
         delete node[oldName]
