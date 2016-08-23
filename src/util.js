@@ -127,7 +127,7 @@ export const toBool = (str) => {
  * *** Unsafe HTML/string handling ***
  */
 export const createElem = html => {
-  const container = document.createDocumentFragment()
+  // const container = document.createDocumentFragment()
   const div = document.createElement('div')
   div.innerHTML = html // Potential Security Exploit Vector!!!!!!
   return div.children.length === 1 ? div.children[0] : div

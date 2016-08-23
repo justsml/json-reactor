@@ -50,26 +50,26 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
     console.trace('   \tGenField(', key, ', ', _value, ')')
 
     if (fldType.value === 'string') {
-      return createElem(`<input type='text' class='field-value' name='field-value' value='${_value}' />`)
+      return createElem(`<input type='text' js-type='${fldType.value}' class='field-value' name='field-value' value='${_value}' />`)
     } else if (fldType.value === 'number') {
-      return createElem(`<input type='number' class='field-value' name='field-value' value='${_value}' />`)
+      return createElem(`<input type='number' js-type='${fldType.value}' class='field-value' name='field-value' value='${_value}' />`)
     } else if (fldType.value === 'boolean') {
-      return createElem(`<input type='checkbox' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
+      return createElem(`<input type='checkbox' js-type='${fldType.value}' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
     } else if (fldType.value === 'array' && renderArrays) {
       return _value.reduce((elem, val, idx) => {
-        let li = createElem(`<li idx="${idx}">${val}: </li>`)
+        let li = createElem(`<li idx="${idx}">${typeof val === 'string' ? val+': ' : ''}</li>`)
         // see if type of array items is simple enough to show value/input field
         if (basicTypes.indexOf(typeof val) <= -1) {
-          li.appendChild(createElem(`<pre>${JSON.stringify(val, null, 2)}</pre>`))
+          li.appendChild(createElem(`<textarea js-type='${fldType.value}' path='${idx}' class='field-value json-value' rows='7'>${JSON.stringify(val, null, 2)}</textarea>`))
         } else {
           li.appendChild(getValueFieldElem(val, false))
         }
         elem.appendChild(li)
         return elem
       }, document.createElement('ul'))
-      return createElem(`<input type='checkbox' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
+      // return createElem(`<input type='checkbox' js-type='${fldType.value}' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
     } else {
-      return createElem(`<span class="has-error"><input type='text' class='field-value' name='field-value' value='${_value}' /></span>`)
+      return createElem(`<span class="has-error"><input type='text' js-type='${fldType.value}' class='field-value' name='field-value' value='${_value}' /></span>`)
     }
   }
 
@@ -122,6 +122,7 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
     const newVal  = convert({ value: v || getValue(), type: newType })
     const newFld  = getValueFieldElem(newVal)
     removeAll(placeholder.children)
+    console.error('Should be empty: placeholder.children', placeholder.children, '\n and the main obj: ', placeholder)
     placeholder.appendChild(newFld)
     return newFld
   }
@@ -132,6 +133,22 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
     const newType = fldType.value
     const oldVal  = getValue()
     updateValueField()
+  }
+
+  const getCurrentValue = () => {
+    let fields  = placeholder.querySelectorAll('input, textarea')
+    let results = Array.from(fields).map(f => {
+      var v = f.value;
+      let jsType = f.getAttribute('js-type')
+      try {
+        if (f.classList.contains('json-value')) {
+          return JSON.parse(v)
+        }
+      } catch (e) { console.error('FAILED TO CONVERT JSON:', e) }
+      return convert({value: v, type: jsType})
+    })
+
+    return type !== 'array' ? results[0] : results
   }
 
   const onSave = (e) => {
@@ -150,6 +167,7 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
     e.preventDefault()
 
     if (changed) {
+      console.warn(`CHANGED! PATH=${path} Value=`, getCurrentValue())
       console.warn(`Saving changes... (${oldName}:${oldValue} => ${newName}:${newValue}) nameChanged=${nameChanged} typeChanged=${typeChanged} valueChanged=${valueChanged} \nArgs=\n`, arguments)
       if (nameChanged) {
         node[newName] = newValue
@@ -160,13 +178,10 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
     } else {
       console.warn(`Nothing changed`)
     }
-
-
   }
 
   const onCancel = ({ target }) => {
     console.warn('Cancelled!!', arguments)
-
   }
 
   const setup = () => {
@@ -181,7 +196,6 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
     form.querySelector('button[type="reset"]').removeEventListener('click', onCancel)
     fldType.removeEventListener('change', onTypeChanged)
     removeNode(form)
-
   }
 
   setup()
