@@ -1,7 +1,11 @@
 import { createElem, closest, removeAll, removeNode, toBool } from './util'
 
-export function FieldEditor({ key, node, parent, path, elem, type = 'string', depth = 0 }) {
+export function FieldEditor({ key, node, elem, parent = null, path = [], type = 'string', depth = 0 }) {
 
+  const getArrayButtons = ({idx = -1}) => createElem(`<div class="j-array-buttons">
+    <button action="add" idx="${idx}">+</button>
+    <button action="remove" idx="${idx}">-</button>
+  </div>`)
   const form = createElem(`<section class="j-edit j-side text-left" key="${key}" type="${type}" depth="${depth}" path="${Array.isArray(path) ? path.join('::') : path}">
     <form class="field-editor">
       <fieldset>
@@ -21,6 +25,7 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
       <fieldset>
         <label>Value</label>
         <div class="valueEditorPlaceholder"></div>
+        <!-- Array buttons go here -->
       </fieldset>
       <fieldset>
         <button type="submit">Save</button>
@@ -34,9 +39,11 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
   const prevVals    = {}
   const getValue    = () => getValueFld().value
   const getValueFld = () => form.querySelector('.field-value') || { value: false }
+  const getType     = () => fldType.value
   const fldName     = form.querySelector('input[name="name"]')
   const fldType     = form.querySelector('select[name="type"]')
   const placeholder = form.querySelector('.valueEditorPlaceholder')
+
   // initialize value tracker (for local 'type' changes)
   prevVals[type]    = value
 
@@ -46,37 +53,40 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
   // define helpers, e.g. build field, transition state (aka convert)
   const basicTypes = ['string', 'number', 'boolean']
 
-  const getValueFieldElem = (_value = getValue(), renderArrays = true) => {
-    console.trace('   \tGenField(', key, ', ', _value, ')')
+  const getTypeName = (x) => Array.isArray(x) ? 'array' : typeof x
 
-    if (fldType.value === 'string') {
-      return createElem(`<input type='text' js-type='${fldType.value}' class='field-value' name='field-value' value='${_value}' />`)
-    } else if (fldType.value === 'number') {
-      return createElem(`<input type='number' js-type='${fldType.value}' class='field-value' name='field-value' value='${_value}' />`)
-    } else if (fldType.value === 'boolean') {
-      return createElem(`<input type='checkbox' js-type='${fldType.value}' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
-    } else if (fldType.value === 'array' && renderArrays) {
+  const getValueFieldElem = (_value = getValue(), renderArrays = true) => {
+    const typeName = getTypeName(_value)
+    console.trace('   \tGenField(', key, ', ', _value, ')', typeName)
+
+    if (typeName === 'string') {
+      return createElem(`<input type='text' js-type='${typeName}' class='field-value' name='field-value' value='${_value}' />`)
+    } else if (typeName === 'number') {
+      return createElem(`<input type='number' js-type='${typeName}' class='field-value' name='field-value' value='${_value}' />`)
+    } else if (typeName === 'boolean') {
+      return createElem(`<input type='checkbox' js-type='${typeName}' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
+    } else if (typeName === 'array' && renderArrays) {
       return _value.reduce((elem, val, idx) => {
         let li = createElem(`<li idx="${idx}">${typeof val === 'string' ? val+': ' : ''}</li>`)
         // see if type of array items is simple enough to show value/input field
         if (basicTypes.indexOf(typeof val) <= -1) {
-          li.appendChild(createElem(`<textarea js-type='${fldType.value}' path='${idx}' class='field-value json-value' rows='7'>${JSON.stringify(val, null, 2)}</textarea>`))
+          li.appendChild(createElem(`<textarea js-type='${typeName}' path='${idx}' class='field-value json-value' rows='7'>${JSON.stringify(val, null, 2)}</textarea>`))
         } else {
           li.appendChild(getValueFieldElem(val, false))
         }
         elem.appendChild(li)
         return elem
       }, document.createElement('ul'))
-      // return createElem(`<input type='checkbox' js-type='${fldType.value}' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
+      // return createElem(`<input type='checkbox' js-type='${typeName}' class='field-value' name='field-value' value='checked'${_value ? ' checked' : ''}' />`)
     } else {
-      return createElem(`<span class="has-error"><input type='text' js-type='${fldType.value}' class='field-value' name='field-value' value='${_value}' /></span>`)
+      return createElem(`<span class="has-error"><input type='text' js-type='${typeName}' class='field-value' name='field-value' value='${JSON.stringify(_value, null, 2)}' /></span>`)
     }
   }
 
   const convert = ({ value, type }) => {
     const jsonPattern = /^\s*(\{|\[).*(\]|\})\s*$/g;
     const isJson = s => jsonPattern.test(s)
-    const currType = Array.isArray(value) ? 'array' : typeof value
+    const currType = getTypeName(value)
     switch (type) {
       case 'string':
         switch (currType) {
@@ -119,10 +129,11 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
 
   const updateValueField = (v) => {
     const newType = fldType.value
-    const newVal  = convert({ value: v || getValue(), type: newType })
+    const newVal  = convert({ value: v || getCurrentValue(), type: newType })
     const newFld  = getValueFieldElem(newVal)
     removeAll(placeholder.children)
-    console.error('Should be empty: placeholder.children', placeholder.children, '\n and the main obj: ', placeholder)
+    // console.error('updateValueField Value:', getValue())
+    console.error('updateValueField', getValue(), getCurrentValue())
     placeholder.appendChild(newFld)
     return newFld
   }
@@ -131,13 +142,14 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
   const onTypeChanged = ({ target }) => {
     console.warn('Type Changed!!', arguments)
     const newType = fldType.value
-    const oldVal  = getValue()
+    const oldVal  = getCurrentValue()
     updateValueField()
   }
 
   const getCurrentValue = () => {
     let fields  = placeholder.querySelectorAll('input, textarea')
-    let results = Array.from(fields).map(f => {
+
+    let results = Array.from(fields).map((f, i, a) => {
       var v = f.value;
       let jsType = f.getAttribute('js-type')
       try {
@@ -145,14 +157,17 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
           return JSON.parse(v)
         }
       } catch (e) { console.error('FAILED TO CONVERT JSON:', e) }
-      return convert({value: v, type: jsType})
+      console.warn('getCurrentValue:', jsType, v)
+      v = convert({value: v, type: jsType})
+      console.warn('V:', v)
+      return v
     })
 
     return type !== 'array' ? results[0] : results
   }
 
   const onSave = (e) => {
-    const { target, detail, preventDefault } = e;
+    // const { target, detail, preventDefault } = e;
     const oldName = key,
           newName = fldName.value,
           oldType = type,
@@ -173,7 +188,7 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
         node[newName] = newValue
         delete node[oldName]
       } else if (valueChanged) {
-        node[newName] = newValue
+        node[key] = getCurrentValue()
       }
     } else {
       console.warn(`Nothing changed`)
@@ -189,6 +204,7 @@ export function FieldEditor({ key, node, parent, path, elem, type = 'string', de
     form.querySelector('button[type="submit"]').addEventListener('click', onSave)
     form.querySelector('button[type="reset"]').addEventListener('click', onCancel)
     fldType.addEventListener('change', onTypeChanged)
+    placeholder.parentNode.appendChild(getArrayButtons({index: -1}))
   }
 
   const destroy = () => {
