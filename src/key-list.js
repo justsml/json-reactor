@@ -5,7 +5,7 @@ import { arrows, ux }                     from './svg-icons'
 import { CustomEvent as _CustomEvent }    from './custom-event'
 // _CustomEvent should auto-attach the object to the window... if not make init function
 
-export function KeyList({ data, parent, path = [], depth = 0 }) {
+export function KeyList({ data, parent, path = [], depth = 0, canAdd = true }) {
   const list = createElem('<ul class="j-keys" depth="' + depth + '"></ul>')
   Object
     .keys(data)
@@ -21,9 +21,20 @@ export function KeyList({ data, parent, path = [], depth = 0 }) {
       Object.assign(row, { node: data, key: key, type: valueType, path: rowPath, value: data[key] })
       // console.warn('row', row, valueType, icon)
       list.appendChild(row)
+      // check for last row
+      if ((arr.length - 1) === idx) {
+        if (canAdd) {
+          const addElem = createElem(`<li class='j-create j-type-string' key='[key name]'></li>`)
+          Object.assign(addElem, {node: data, key: '[key]', type: 'string', path: rowPath, value: '', innerHTML: ' [new] '})
+          list.appendChild(addElem)
+        }
+
+      }
     })
+
+
   const _clickHandler = (e) => {
-    const { preventDefault, target } = e
+    const {target} = e
     const li = closest(target, 'li', 2)
     if (li) {
       e.preventDefault()

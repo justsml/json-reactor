@@ -69,7 +69,7 @@ export function FieldEditor({ key, node, elem, parent = null, path = [], type = 
       return _value.reduce((elem, val, idx) => {
         let li = createElem(`<li idx="${idx}">${typeof val === 'string' ? val+': ' : ''}</li>`)
         // see if type of array items is simple enough to show value/input field
-        if (basicTypes.indexOf(typeof val) <= -1) {
+        if (basicTypes.indexOf(getTypeName(val)) <= -1) {
           li.appendChild(createElem(`<textarea js-type='${typeName}' path='${idx}' class='field-value json-value' rows='7'>${JSON.stringify(val, null, 2)}</textarea>`))
         } else {
           li.appendChild(getValueFieldElem(val, false))
@@ -123,7 +123,7 @@ export function FieldEditor({ key, node, elem, parent = null, path = [], type = 
           default:       return {}
         }
     }
-    console.error('Failed to Match Type: ', type, currType, value);
+    console.error('Failed to Match Type: ', type, currType, value)
     return value;
   }
 
@@ -132,7 +132,7 @@ export function FieldEditor({ key, node, elem, parent = null, path = [], type = 
     const newVal  = convert({ value: v || getCurrentValue(), type: newType })
     const newFld  = getValueFieldElem(newVal)
     removeAll(placeholder.children)
-    // console.error('updateValueField Value:', getValue())
+    console.error('placeholder empty?', placeholder.children)
     console.error('updateValueField', getValue(), getCurrentValue())
     placeholder.appendChild(newFld)
     return newFld
@@ -140,9 +140,10 @@ export function FieldEditor({ key, node, elem, parent = null, path = [], type = 
 
   // define events, onTypeChanged, onSave, onCancel
   const onTypeChanged = ({ target }) => {
-    console.warn('Type Changed!!', arguments)
     const newType = fldType.value
     const oldVal  = getCurrentValue()
+    removeAll(placeholder.children)
+    console.warn(`Type Changed!! OriginalType=${type} Val=${oldVal} `, arguments)
     updateValueField()
   }
 

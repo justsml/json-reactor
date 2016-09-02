@@ -39,28 +39,31 @@ ul.j-keys {
     padding-left: 10px;
     margin-left: -30px;
   }
-  
+
   .j-icon-edit, .j-icon-list, .j-icon-arrow-down { zoom: 40%; }
   li:not(.j-closed) {
-    > .j-icon-arrow-down { transform: rotate(-90deg) !important; }
+    > .j-icon-arrow-down { transform: rotate(0deg) !important; }
   }
 
   .j-closed {
     > ul { display: none; }
     &:before { content: ' ' !important; }
-    > .j-icon-arrow-down { transform: rotate(0deg) !important; }
+    > .j-icon-arrow-down { transform: rotate(-90deg) !important; }
   }
   .j-icon-plus:before { content: ' '; }
   .j-icon-list:before { content: ' '; }
   .j-icon-text:before { content: 'ℹ ' !important; }
   .j-icon-default:before { content: '🔤 ️' !important; }
-  // .j-type-string:before { content: '-'; }
-  // .j-type-boolean:before { content: '-'; }
-  // .j-type-plus:before { content: '-'; }
+  .j-create { font-style: italic; }
 
 }
+
+
 .field-editor {
+  ul {
+    list-style: none;
+  }
   fieldset {
-    max-width: 275px;
+    width: 100%;
   }
 }

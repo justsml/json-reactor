@@ -1,6 +1,6 @@
 {
   "name": "json-editor",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/justsml/json-editor.git"
@@ -17,10 +17,10 @@
   "description": "A JSON Object Editor Component. Pure JavaScript, NO jQuery. Built w/ WebPack. Wrappers For React, Angular, Dojo coming soon!",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && http-server -p 1338",
+    "start": "npm run build && http-server -p 7331",
     "build-dev": "NODE_ENV=development webpack --config ./webpack.config.js",
     "build": "NODE_ENV=production webpack --config ./webpack.config.js",
-    "watch": "webpack --watch --config ./webpack.config.js",
+    "watch": "npm run build-dev && NODE_ENV=development webpack --watch --config ./webpack.config.js",
     "compress": "uglifyjs --compress --mangle --screw-ie8 -o ./dist/json-editor.min.js -- ./dist/json-editor.bundle.js",
     "test-debug": "casperjs test --verbose --log-level=debug ./tests/e2e-tests.js",
     "test": "casperjs test --verbose ./tests/e2e-tests.js"
