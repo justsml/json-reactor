@@ -1,3 +1,4 @@
+/*eslint no-unused-vars: 1*/
 import { createElem, closest, removeAll, removeNode, toBool } from './util'
 
 export function FieldEditor({ key, node, elem, parent = null, path = [], type = 'string', depth = 0 }) {

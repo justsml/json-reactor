@@ -1,0 +1,13 @@
+{
+  "name": "json-editor",
+  "dependencies": {},
+  "globalDependencies": {
+    "bluebird": "registry:dt/bluebird#3.0.0+20160811111256",
+    "dom4": "registry:dt/dom4#1.5.0+20160412153730",
+    "express": "registry:dt/express#4.0.0+20160708185218",
+    "express-serve-static-core": "registry:dt/express-serve-static-core#4.0.0+20160819131900",
+    "node": "registry:dt/node#6.0.0+20160826120425",
+    "react": "registry:dt/react#0.14.0+20160817201227",
+    "serve-static": "registry:dt/serve-static#0.0.0+20160606155157"
+  }
+}

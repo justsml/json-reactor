@@ -1,5 +1,9 @@
 // jscs:disable safeContextKeyword
 
+export function getType(value) {
+  return value && Object.prototype.toString.call(value).replace('[object ', '').replace(']', '').toLowerCase();
+}
+
 /**
  * Utility arrayify method
  * Add to .prototype of Iterators, ArrayBuffer, Arguments, NodeList, Set/WeakSet, whatever #YOLO

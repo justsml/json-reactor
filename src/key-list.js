@@ -1,4 +1,5 @@
-import { config }                         from './config'
+/*eslint no-unused-vars: 1*/
+// import { config }                         from './config'
 import { createElem, closest,
           removeAll, removeNode } from './util'
 import { arrows, ux }                     from './svg-icons'
