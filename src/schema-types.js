@@ -56,7 +56,7 @@ function guessType(value, defaultValue = JS_DEFAULT_TYPE) {
     return JS_STRING_TYPE;
     // double check if it's really number-ish
     // if (isNumber(value).toString() === value) { return JS_NUMBER_TYPE; }
-  } else if (Array.isArray(value)) {
+  } else if (_.isArrayLike(value)) {
     return JS_ARRAY_TYPE;
   } else if (typeof(value) === 'object') {
     return JS_OBJECT_TYPE;
