@@ -33,8 +33,7 @@ const isDate    = str => {
     'MM-DD-YYYY', 'YYYY-MM-DD', 'MM/DD/YYYY', 'MM/DD/YY'];
   try {
     date = new Date(Date.parse(str));
-    console.warn('DATE.CTORD=', date);
-    if (date && date.getFullYear() !== 1970) {
+    if (date && date.toISOString()) {
       return true;
     }
   } catch (e) {
