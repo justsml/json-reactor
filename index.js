@@ -1,6 +1,6 @@
-import {KeyList}      from './src/key-list'
-import {FieldEditor}  from './src/field-editor'
-import {Styles}       from './src/util'
+import {KeyList}      from './src/KeyList'
+import {FieldEditor}  from './src/FieldEditor'
+import {Styles}       from './src/Util'
 
 export function create(elem, config) {
   if (!elem)   { throw new Error('JsonEditor instance requires 1st param `elem`') }

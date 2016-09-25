@@ -1,4 +1,4 @@
-const {guessType, JS_ENUM_TYPE, TYPE_COMPLEXITY_ORDER} = require('./schema-types');
+const {guessType, JS_ENUM_TYPE, TYPE_COMPLEXITY_ORDER} = require('./SchemaTypes');
 
 export function buildSchema(data) {
   const schemaLevels = data.reduce(_evaluateSchemaLevel, {'_uniques': {}, '_totalRecords': 0});
@@ -40,7 +40,7 @@ export function _condenseSchemaLevel(schema) {
 export function _checkUpgradeType({currentType, currentValue, key, schema}) {
   var typeGuess = guessType({currentType, currentValue});
   // console.log(`Guessed type for ${key}=${typeGuess.type}`);
-  if (typeof(currentValue) === 'object' && currentValue.toString() === '[object Object]' && Object.keys(currentValue).length >= 2) {
+  if (currentValue && typeof(currentValue) === 'object' && Object.keys(currentValue).length >= 2) {
     return _evaluateSchemaLevel(schema[key], currentValue)
   }
   if (TYPE_COMPLEXITY_ORDER.indexOf(typeGuess) >= TYPE_COMPLEXITY_ORDER.indexOf(currentType)) {
