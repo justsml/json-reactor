@@ -1,6 +1,6 @@
 {
   "name": "json-editor",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/justsml/json-editor.git"
@@ -22,8 +22,9 @@
     "build": "NODE_ENV=production webpack --config ./webpack.config.js",
     "watch": "npm run build-dev && NODE_ENV=development webpack --watch --config ./webpack.config.js",
     "compress": "uglifyjs --compress --mangle --screw-ie8 -o ./dist/json-editor.min.js -- ./dist/json-editor.bundle.js",
-    "test-debug": "casperjs test --verbose --log-level=debug ./tests/e2e-tests.js",
-    "test": "casperjs test --verbose ./tests/e2e-tests.js"
+    "test-e2e-debug": "casperjs test --verbose --log-level=debug ./tests/e2e-tests.js",
+    "test-e2e": "casperjs test --verbose ./tests/e2e-tests.js",
+    "test": "tape ./src/*.test.js | tap-summary"
   },
   "author": "Dan Levy <Dan@DanLevy.net>",
   "license": "MIT",
@@ -45,5 +46,10 @@
     "st": "1.1.0",
     "style-loader": "0.13.1",
     "webpack": "1.13.0"
+  },
+  "dependencies": {
+    "moment": "^2.15.1",
+    "tap-summary": "^3.0.1",
+    "tape": "^4.6.0"
   }
 }
