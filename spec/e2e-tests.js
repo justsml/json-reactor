@@ -1,3 +1,5 @@
+/*global casper*/
+
 //const casper = require('casper').create()
 const URL = 'http://0.0.0.0:1338/tests/index.html'
 const VIEWPORT = {
