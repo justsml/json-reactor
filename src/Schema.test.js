@@ -1,9 +1,14 @@
 require('babel-register');
 
 const test   = require('tape');
-const {buildSchema} = require('./Schema');
+const {buildSchema}               = require('./Schema');
+const {_findEnumTypes}            = require('./Schema');
+const {_filterTypesByProbability} = require('./Schema');
 
 const sample1 = [
+  {id:1,name:'John',email:undefined,active:'y',signup:'2016-12-31T07:00:00.000Z',cancelled:'2017-01-01T07:00:00.000Z'},
+]
+const sample2 = [
   {id:1,name:'John',email:undefined,active:'y',signup:'2016-12-31T07:00:00.000Z',cancelled:'2017-01-01T07:00:00.000Z'},
   {id:2,name: null, email:'a@a.com',active:'n',signup:'2016-12-31T07:00:00.000Z',cancelled:null},
   {id:3,name: null, email:'a@a.com',active:null,signup:'2016-12-31T07:00:00.000Z',cancelled:null},
@@ -14,11 +19,56 @@ const sample1 = [
   {id:8,name:'Eve', email:'a@a.com',active:'y',signup:'2016-12-31T07:00:00.000Z'},
   {id:9,name:'Bond',email:'a@a.com',active:'y',signup:'2016-12-31T07:00:00.000Z',nullVal:null,undefVal:undefined},
 ]
+
 test('schema: auto-detect from sample array #1', t => {
   const schema = buildSchema(sample1);
-  console.warn('SCHEMAAAAAH:', schema)
+  console.warn('SCHEMAAAAAH:', schema);
+  t.end();
 })
 
+test('schema: auto-detect from sample array #2', t => {
+  const schema = buildSchema(sample2);
+  console.warn('SCHEMAAAAAH:', schema)
+  t.end();
+})
+
+test('schema: enum detection', t => {
+  const uniques = { id: { '1': 1, '2': 1, '3': 1, '4': 1, '5': 1, '6': 1, '7': 1, '8': 1, '9': 1 },
+    name: { John: 1, null: 4, Bob: 1, Alice: 1, Eve: 1, Bond: 1 },
+    email: { undefined: 1, 'a@a.com': 8 },
+    active: { y: 5, n: 1, null: 1, yes: 1, YES: 1 },
+    status: { active: 500, disabled: 99, pending: 777, expired: 981, ERronEOus_values: 2 },
+    signup: { '2016-12-31T07:00:00.000Z': 9 },
+    cancelled: { '2017-01-01T07:00:00.000Z': 1, null: 6 },
+    nullVal: { null: 1 },
+    undefVal: { undefined: 1 }
+  };
+  let enums = _findEnumTypes({uniques});
+  t.equals(enums.length, 1);
+  t.assert(enums[0].enum, 'has a status enum');
+  t.equals(enums[0].enum.length, 4);
+  t.equal(enums[0].name, 'status');
+  t.end();
+})
+
+test('schema: _filterTypesByProbability', t => {
+  const sumTypes = {
+    id: { number: 9 },
+    name: { boolean: 1, null: 4, string: 4 },
+    email: { null: 1, string: 8 },
+    active: { boolean: 8, null: 1 },
+    signup: { date: 9 },
+    cancelled: { date: 1, null: 6 },
+    nullVal: { null: 1 },
+    undefVal: { null: 1 } }
+  const fields = _filterTypesByProbability({sumTypes}, 90);
+
+  console.warn('\n_filterTypesByProbability', fields, '\n');
+  t.equals(fields.id.type, 'number');
+  t.equals(fields.email.type, 'string');
+
+  t.end();
+})
 // export function (data) {
 //   const schemaLevels = data.reduce(_evaluateSchemaLevel, {'_uniques': {}, '_totalRecords': 0});
 //   return schemaLevels;
