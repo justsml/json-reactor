@@ -1,33 +1,28 @@
 require('babel-register');
 
 const test   = require('tape');
+const _      = require('lodash');
 const {buildSchema}               = require('./Schema');
 const {_findEnumTypes}            = require('./Schema');
 const {_filterTypesByProbability} = require('./Schema');
 
-const sample1 = [
+const sampleIncomplete = [
   {id:1,name:'John',email:undefined,active:'y',signup:'2016-12-31T07:00:00.000Z',cancelled:'2017-01-01T07:00:00.000Z'},
 ]
-const sample2 = [
-  {id:1,name:'John',email:undefined,active:'y',signup:'2016-12-31T07:00:00.000Z',cancelled:'2017-01-01T07:00:00.000Z'},
-  {id:2,name: null, email:'a@a.com',active:'n',signup:'2016-12-31T07:00:00.000Z',cancelled:null},
-  {id:3,name: null, email:'a@a.com',active:null,signup:'2016-12-31T07:00:00.000Z',cancelled:null},
-  {id:4,name: null, email:'a@a.com',active:'yes',signup:'2016-12-31T07:00:00.000Z',cancelled:null},
-  {id:5,name: null, email:'a@a.com',active:'YES',signup:'2016-12-31T07:00:00.000Z',cancelled:null},
-  {id:6,name:'Bob', email:'a@a.com',active:'y',signup:'2016-12-31T07:00:00.000Z',cancelled:null},
-  {id:7,name:'Alice', email:'a@a.com',active:'y',signup:'2016-12-31T07:00:00.000Z',cancelled:null},
-  {id:8,name:'Eve', email:'a@a.com',active:'y',signup:'2016-12-31T07:00:00.000Z'},
-  {id:9,name:'Bond',email:'a@a.com',active:'y',signup:'2016-12-31T07:00:00.000Z',nullVal:null,undefVal:undefined},
-]
+const sample1 = fixColArrayData(require('../test/sample-data-1.json'));
 
 test('schema: auto-detect from sample array #1', t => {
-  const schema = buildSchema(sample1);
-  console.warn('SCHEMAAAAAH:', schema);
+  const schema = buildSchema(sampleIncomplete);
+  let count = Object.keys(schema)
+    .filter(key => key.indexOf('__') === -1)
+    .length;
+  t.equals(count, 0);
   t.end();
 })
 
 test('schema: auto-detect from sample array #2', t => {
-  const schema = buildSchema(sample2);
+  const schema = buildSchema(sample1);
+
   console.warn('SCHEMAAAAAH:', schema)
   t.end();
 })
@@ -53,22 +48,32 @@ test('schema: enum detection', t => {
 
 test('schema: _filterTypesByProbability', t => {
   const sumTypes = {
-    id: { number: 9 },
-    name: { boolean: 1, null: 4, string: 4 },
-    email: { null: 1, string: 8 },
-    active: { boolean: 8, null: 1 },
-    signup: { date: 9 },
-    cancelled: { date: 1, null: 6 },
+    id: { number: 90 },
+    name: { boolean: 1, null: 4, string: 400 },
+    email: { null: 1, string: 80 },
+    active: { boolean: 88, null: 1 },
+    signup: { date: 99 },
+    cancelled: { date: 1, null: 69 },
     nullVal: { null: 1 },
     undefVal: { null: 1 } }
   const fields = _filterTypesByProbability({sumTypes}, 90);
 
-  console.warn('\n_filterTypesByProbability', fields, '\n');
+  // console.warn('\n_filterTypesByProbability', fields, '\n');
   t.equals(fields.id.type, 'number');
   t.equals(fields.email.type, 'string');
-
+  t.equals(fields.active.type, 'boolean');
+  t.equals(fields.signup.type, 'date');
   t.end();
 })
+
+
+
+
+function fixColArrayData({cols, data}) {
+  return data.map(arr => _.zip(cols, arr));
+}
+
+
 // export function (data) {
 //   const schemaLevels = data.reduce(_evaluateSchemaLevel, {'_uniques': {}, '_totalRecords': 0});
 //   return schemaLevels;

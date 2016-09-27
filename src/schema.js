@@ -12,7 +12,14 @@ const limits = {
 
 export function buildSchema(data) {
   const schemaLevels = data.reduce(_evaluateSchemaLevel);
-  return schemaLevels;
+  const enumFields   = _findEnumTypes(schemaLevels);
+  const schema       = _filterTypesByProbability(schemaLevels);
+  console.warn('\n\nenumFields', enumFields, '\n\n');
+  enumFields.forEach(enumFld => {
+    // override field on schema with enum props
+    schema[enumFld.name] = Object.assign(schema[enumFld.name] || {}, enumFld);
+  });
+  return schema;
 }
 
 export function _evaluateSchemaLevel(schema, obj) {
@@ -109,6 +116,7 @@ export function _findEnumTypes({uniques = {}}) {
  * @returns
  */
 export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
+  const __improbableKeys = [];
   return Object.keys(sumTypes)
     .map(field => {
       let fieldTypeCounts = sumTypes[field];
@@ -121,7 +129,10 @@ export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
         .reduce((sum, valIdx) => {
           return sum + fieldTypeCounts[valIdx];
         }, 0);
-      console.log('Probability: fieldTypeList.sort:', fieldTypeList.join(', '));
+      if (colSum < limits.minFieldTypeCount) {
+        __improbableKeys.push(field);
+        return null;
+      }
       percentMin = percentMin > 1 ? percentMin / 100.0 : percentMin;
       const pctColSum = type => {
         return fieldTypeCounts[type] > limits.minFieldTypeCount
@@ -129,34 +140,29 @@ export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
       };
 
       fieldTypeList = fieldTypeList.filter(pctColSum);
-      console.log('Probability: fieldTypeList.filtered:', fieldTypeList.map(pctColSum), fieldTypeList.join(', '));
-      // if (colSum <= limits.enableEnumMinRows) { return null; }
-      // if (fieldTypeList.length <= limits.enumSize) {
-      //   // we have enum - maybe!!!
-      //   return {name: field, type: 'string', enum: fieldTypeList.sort(), __commonFieldTotal: colSum};
-      // }
       if (fieldTypeList && fieldTypeList.length >= 1) {
         return {
           name: field,
           type: fieldTypeList[0],
           __lastType: fieldTypeList[fieldTypeList.length - 1],
           __fieldTypes: fieldTypeList,
+          __sumTypes: colSum,
         };
       }
       console.warn(`${field}: colSum`, colSum);
       return {
         name: field,
-        type: undefined,
-        __columnTotal: colSum,
-        __fieldTypes: fieldTypeList,
+        type: 'object',// default type
+        undefined: true, // not determinable
+        __sumTypes: colSum,
       }
     })
     .reduce((schema, fieldData) => {
+      if (!fieldData) { return schema; }
       let {name} = fieldData;
-
       schema[name] = fieldData;
       return schema;
-    }, {});
+    }, {__improbableKeys});
 }
 
 export function _condenseSchemaLevel(schema) {
