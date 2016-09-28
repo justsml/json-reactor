@@ -27,7 +27,7 @@
     "compress": "uglifyjs --compress --mangle --screw-ie8 -o ./dist/json-editor.min.js -- ./dist/json-editor.bundle.js",
     "test-e2e-debug": "casperjs test --verbose --log-level=debug ./tests/e2e-tests.js",
     "test-e2e": "casperjs test --verbose ./tests/e2e-tests.js",
-    "test": "tape ./src/*.test.js | tap-summary"
+    "test": "tape ./src/*/*.test.js | tap-summary"
   },
   "author": "Dan Levy <Dan@DanLevy.net>",
   "license": "MIT",

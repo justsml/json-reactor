@@ -11,6 +11,7 @@ test('fuzzy date checker', t => {
   t.true(isDate('12-31-2000'))
   t.true(isDate('Dec 31, 2000'))
   t.true(isDate('December 31, 2000'))
+  t.true(isDate('2012-04-23T16:11:31-07:00'))
   // Bad Dates
   t.false(isDate('Hi 12-31 Hi! 07:00:00.000'))
   t.false(isDate('20:12'))
@@ -20,6 +21,8 @@ test('fuzzy date checker', t => {
 
 test('fuzzy number checker', t => {
   t.true(isNumber('999,999,999,000.99'))
+  t.true(isNumber('$10000'))
+  t.true(isNumber('$10,000.99'))
   t.true(isNumber('10000'))
   t.true(isNumber(10000))
   t.true(isNumber(0.0))

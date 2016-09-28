@@ -10,7 +10,9 @@ const sampleIncomplete = [
   {id:1,name:'John',email:undefined,active:'y',signup:'2016-12-31T07:00:00.000Z',cancelled:'2017-01-01T07:00:00.000Z'},
 ]
 const sample1 = fixColArrayData(require('../test/sample-data-1.json'));
+const sampleUsers  = require('../test/sample-users.json');
 
+// console.warn('sample1.signup: ', _.map(_.take(sample1, 10), 'signup'));
 test('schema: auto-detect from sample array #1', t => {
   const schema = buildSchema(sampleIncomplete);
   let count = Object.keys(schema)
@@ -24,6 +26,28 @@ test('schema: auto-detect from sample array #2', t => {
   const schema = buildSchema(sample1);
 
   console.warn('SCHEMAAAAAH:', schema)
+  t.equals(schema.balance.type, 'number');
+  t.equals(schema.latLon.type, 'string');
+  t.equals(schema.notes.type, 'string');
+  t.equals(schema.externalId.type, 'string');
+  t.equals(schema.pin.type, 'number');
+  t.equals(schema.company.type, 'string');
+  t.equals(schema.signup.type, 'date');
+  t.end();
+})
+
+
+test('schema: auto-detect from sample array #2', t => {
+  const schema = buildSchema(sampleUsers);
+
+  console.warn('SCHEMAAAAAH:', schema)
+  t.true(schema.name, 'has name');
+  // t.equals(schema.latLon.type, 'string');
+  // t.equals(schema.notes.type, 'string');
+  // t.equals(schema.externalId.type, 'string');
+  // t.equals(schema.pin.type, 'number');
+  // t.equals(schema.company.type, 'string');
+  // t.equals(schema.signup.type, 'date');
   t.end();
 })
 
@@ -70,7 +94,7 @@ test('schema: _filterTypesByProbability', t => {
 
 
 function fixColArrayData({cols, data}) {
-  return data.map(arr => _.zip(cols, arr));
+  return data.map(arr => _.zipObject(cols, arr));
 }
 
 

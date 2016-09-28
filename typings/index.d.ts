@@ -7,3 +7,4 @@
 /// <reference path="globals/react/index.d.ts" />
 /// <reference path="globals/serve-static/index.d.ts" />
 /// <reference path="globals/tape/index.d.ts" />
+/// <reference path="modules/lodash/index.d.ts" />
