@@ -9,8 +9,8 @@ const {_filterTypesByProbability} = require('./Schema');
 const sampleIncomplete = [
   {id:1,name:'John',email:undefined,active:'y',signup:'2016-12-31T07:00:00.000Z',cancelled:'2017-01-01T07:00:00.000Z'},
 ]
-const sample1 = fixColArrayData(require('../test/sample-data-1.json'));
-const sampleUsers  = require('../test/sample-users.json');
+const sample1 = fixColArrayData(require('../../test/sample-data-1.json'));
+const sampleUsers  = require('../../test/sample-users.json');
 
 // console.warn('sample1.signup: ', _.map(_.take(sample1, 10), 'signup'));
 test('schema: auto-detect from sample array #1', t => {
