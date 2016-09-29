@@ -48,7 +48,7 @@ export function Parser({data, columns = []}, opts) {
  * @export
  * @param {any} {rows, cols}
  */
-export function _rowParser({rows, cols, colDelimiter = ','}) {
+export function _rowReducer({rows, cols, colDelimiter = ','}) {
   const rowSize = cols.length;
   // const between = (n, a, b) => n >= a && n <= b;
 
@@ -57,13 +57,23 @@ export function _rowParser({rows, cols, colDelimiter = ','}) {
   // if row.len is > whole row, then break apart into x chunks
   return rows.reduce((results = [], row) => {
     row = row.split(colDelimiter);
+    if (row.length === 1 && row[0] && row[0].trim().length >= 1) {
+      // try append result onto last item of last row
+      let last = results.length > 0 ? results[results.length-1] : null;
+      last[last.length - 1] = [last[last.length - 1], row[0]].join('\n');
+      results.splice(results.length - 1, 1, last);
+      return results;
+    }
+    if (row.length === 0) {
+      return results;
+    }
     // normalize larger than expected rows
     _.chunk(row, rowSize)
     .forEach(row => {
       let last = results.length > 0 ? results[results.length-1] : null;
       if (row.length === 1) {
         if (last && last.length < rowSize) {
-          last.push(row[0]);
+          last[last.length - 1] = [last[last.length - 1], row[0]].join('\n');
           return results.splice(results.length - 1, 1, last);
         } else if (!last) {
           // WARN: Uncertain row ending, needs possible 2nd pass

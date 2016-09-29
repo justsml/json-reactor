@@ -28,6 +28,14 @@ Denver CO 80123,Acme`.trim().split(/\n/),
   colDelimiter: ',',
   expects: {rows: 1}
 }, {
+  desc: '3 extra line-breaks',
+  rows: `101,John,Doe,Attn: Delivery
+123 Main St.
+
+Denver CO 80123,Acme`.trim().split(/\n/),
+  colDelimiter: ',',
+  expects: {rows: 1}
+}, {
   desc: 'Unclear field ending w/ + line break',
   rows: `"100","John","Doe","ATTN: Anon,
 666 Heck Hwy, Kansas City","Cat Herder"
@@ -40,7 +48,7 @@ Denver, CO 80123","Acme"`.trim().split(/\n/),
 
 
 const test   = require('tape');
-const {Parser, _rowParser} = require('./Parser');
+const {Parser, _rowReducer} = require('./Parser');
 
 test('test CSV parser on Pipe Delimited Data', t => {
   //Valid Dates
@@ -77,7 +85,7 @@ test('can parse line-breaks', t => {
   const colSize = multilineCols.length;
   multilineRows.forEach(({desc, rows, colDelimiter, expects}) => {
     t.test(desc, t => {
-      let data = _rowParser({rows, colDelimiter, cols: multilineCols});
+      let data = _rowReducer({rows, colDelimiter, cols: multilineCols});
       t.true(data[0].length === colSize, 'row must have expected columns');
       t.equal(data.length, expects.rows, `row len as expected? ${Array.isArray(data) ? JSON.stringify(data) : 'notArray'}`);
       t.end();
