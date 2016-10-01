@@ -14,9 +14,9 @@ export function buildSchema(data) {
   const schemaLevels = data.reduce(_evaluateSchemaLevel);
   const enumFields   = _findEnumTypes(schemaLevels);
   const schema       = _filterTypesByProbability(schemaLevels);
-  console.warn('\n\nenumFields', enumFields, '\n\n');
+  // console.warn('\n\nenumFields', enumFields, '\n\n');
   enumFields.forEach(enumFld => {
-    console.warn(`\nenumFld: ${enumFld && enumFld.name}`, enumFld);
+    // console.warn(`\nenumFld: ${enumFld && enumFld.name}`, enumFld);
     // override field on schema with enum props
     schema[enumFld.name] = Object.assign(schema[enumFld.name] || {}, enumFld);
   });
@@ -94,7 +94,7 @@ export function _findEnumTypes({uniques = {}}) {
       let fieldValList = Object.keys(fieldValCounts)
         // min # of occurances for individual token/value must exceed this limits.enableEnumMinRows setting -
         //TODO: might need to change this to filter before we even get into this `.map` closure or maybe using something like colSum below - i.e. total # of values between range of hits.
-        // .filter(commonValue => fieldValCounts[commonValue] >= limits.enableEnumMinRows);
+        .filter(commonValue => fieldValCounts[commonValue] >= limits.enableEnumMinRows);
       let colSum = fieldValList
         .reduce((sum, valIdx) => {
           return sum + fieldValCounts[valIdx];
@@ -104,7 +104,7 @@ export function _findEnumTypes({uniques = {}}) {
         // we have enum - maybe!!!
         return {name: field, type: 'string', enum: fieldValList.sort(), __commonFieldTotal: colSum};
       }
-      console.warn(`${field}: colSum`, colSum);
+      // console.warn(`${field}: colSum`, colSum);
       // return {name: field, columnTotal: colSum}
     })
     .filter(f => f && f.enum);
@@ -141,7 +141,7 @@ export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
       };
 
       fieldTypeList = fieldTypeList.filter(pctColSum);
-      console.warn(`${field}: colSum`, colSum, fieldTypeList);
+      // console.warn(`${field}: colSum`, colSum, fieldTypeList);
       if (fieldTypeList && fieldTypeList.length >= 1) {
         return {
           name: field,
@@ -161,7 +161,7 @@ export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
     .reduce((schema, fieldData) => {
       if (!fieldData) { return schema; }
       let {name} = fieldData;
-      console.warn(`REDUCING=${Object.keys(schema).length} Name=${name}`);
+      // console.warn(`REDUCING=${Object.keys(schema).length} Name=${name}`);
       schema[name] = fieldData;
       return schema;
     }, {__improbableKeys});
@@ -176,7 +176,7 @@ export function _condenseSchemaLevel(schema) {
     if (['number', 'string'].indexOf(schema[k].type) > -1 && schema.sumTypes[k].size <= setToEnumLimit) {
       schema[k] = JS_ENUM_TYPE;
       schema[k].enum = Array.from(schema.sumTypes[k]).sort();
-      console.log(`Enumified ${k}=${schema[k].enum.join(', ')}`);
+      // console.log(`Enumified ${k}=${schema[k].enum.join(', ')}`);
     } else {
       schema.sumTypes[k] = null;//Array.from(schema.sumTypes[k]).sort().join(', '); //temp for debugging// set to null or remove later
     }

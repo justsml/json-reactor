@@ -25,7 +25,7 @@ test('schema: auto-detect from sample array #1', t => {
 test('schema: auto-detect from sample array #2', t => {
   const schema = buildSchema(sample1);
 
-  console.warn('SCHEMAAAAAH:', schema)
+  // console.warn('SCHEMAAAAAH:', schema)
   t.equals(schema.balance.type, 'number');
   t.equals(schema.latLon.type, 'string');
   t.equals(schema.notes.type, 'string');
@@ -40,7 +40,7 @@ test('schema: auto-detect from sample array #2', t => {
 test('schema: auto-detect from sample array #2', t => {
   const schema = buildSchema(sampleUsers);
 
-  console.warn('SCHEMAAAAAH:', schema)
+  // console.warn('SCHEMAAAAAH:', schema)
   t.true(schema.name, 'has name');
   // t.equals(schema.latLon.type, 'string');
   // t.equals(schema.notes.type, 'string');
@@ -64,6 +64,7 @@ test('schema: enum detection', t => {
   };
   let enums = _findEnumTypes({uniques});
   t.equals(enums.length, 1);
+  // console.warn('enums', enums);
   t.assert(enums[0].enum, 'has a status enum');
   t.equals(enums[0].enum.length, 4);
   t.equal(enums[0].name, 'status');
