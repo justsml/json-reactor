@@ -126,6 +126,40 @@ export const toBool = (str) => {
   return str ? true : false
 }
 
+export const Errors = {
+  SchemaDetectionError: _errorFactory('SchemaDetectionError'),
+  MissingColumnsError: _errorFactory('MissingColumnsError'),
+  // // SchemaDetectionError: _errorFactory('SchemaDetectionError'),
+}
+
+/**
+ * errorFactory:
+ * Literally an error factory
+ *
+ * @param {any} name
+ * @returns
+ */
+export function _errorFactory(name) {
+  const newErr = (message, opts) => {
+    if (typeof message !== 'string') {
+      // no string msg supplied, use err name as message, useful for functional chains & promise signalling through 'catch'
+      opts     = message;
+      message  = name;
+    }
+    var error     = Error.call(this, message);
+    if (typeof opts === 'object') { Object.assign(this, opts); }
+    this.name     = name;
+    this.message  = error.message;
+    this.stack    = error.stack;
+  }
+  newErr.prototype              = Object.create(Error.prototype);
+  newErr.prototype.constructor  = newErr;
+  newErr.prototype.name         = name;
+  return newErr;
+}
+
+
+
 /**
  * Warning: Private/local use only. Do not hoist.
  * *** Unsafe HTML/string handling ***
