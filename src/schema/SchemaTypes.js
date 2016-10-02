@@ -22,7 +22,7 @@ export const JS_TYPES = TYPE_COMPLEXITY_ORDER;
 const patterns = {
   // date: [/^[0-3]?[0-9]\/[0-3]?[0-9]\/(?:[0-9]{2})?[0-9]{2}$/],
   boolean: [/^(true|false)$/i, /^(yes|no)$/i, /^(Y|N)$/i, /^(1|0)$/i],
-  number: [/^\$?[\.,\d]*$/]
+  number: [/^[$€¢£¥₪₩₽฿₫₴₹]?\s?[\.,\d]*$/]
 }
 export const isBoolean = str => typeof str !== 'object' && (str === true || str === false || patterns.boolean.some(p => p.test(String(str))));
 export const isNumber  = str => typeof str !== 'object' && (_.isFinite(str) || patterns.number.some(p => p.test(String(str))));
