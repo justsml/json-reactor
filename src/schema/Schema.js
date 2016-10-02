@@ -13,7 +13,17 @@ const _default = {
   }
 };
 
-export function buildSchema(data, opts = _default.opts) {
+module.exports = {
+  buildSchema,
+  _evaluateSchemaLevel,
+  _findEnumTypes,
+  _filterTypesByProbability,
+  _condenseSchemaLevel,
+  _checkUpgradeType,
+};
+
+
+function buildSchema(data, opts = _default.opts) {
   opts = Object.assign({}, _default.opts, opts);
   const schemaLevels = data.reduce(_evaluateSchemaLevel, opts);
   const enumFields   = _findEnumTypes.call(opts, schemaLevels);
@@ -30,8 +40,8 @@ export function buildSchema(data, opts = _default.opts) {
   return schema;
 }
 
-export function _evaluateSchemaLevel(schema, obj) {
-  const opts = Object.assign({}, _default.opts, this || {});
+function _evaluateSchemaLevel(schema, obj, opts = _default.opts) {
+  opts = Object.assign({}, opts, this || {});
   schema = Object.assign({sumTypes: {}, uniques: {}, sizes: {}, fieldCount: 0, columnCount: 0}, schema || {});
   schema._fieldCount = schema._fieldCount === undefined ? 0 : schema._fieldCount;
   Object.keys(obj)
@@ -114,8 +124,8 @@ _fieldCount: 54 }
  * @param {any} {uniques = {}}
  * @returns
  */
-export function _findEnumTypes({uniques = {}}) {
-  const opts = Object.assign({}, _default.opts, this || {});
+function _findEnumTypes({uniques = {}}, opts = _default.opts) {
+  opts = Object.assign({}, opts, this || {});
   return Object.keys(uniques)
     .map(field => {
       let fieldValCounts = uniques[field];
@@ -144,8 +154,8 @@ export function _findEnumTypes({uniques = {}}) {
  * @param {number} [percentMin=10]
  * @returns
  */
-export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
-  const opts = Object.assign({}, _default.opts, this || {});
+function _filterTypesByProbability({sumTypes = {}}, percentMin = 50, opts = _default.opts) {
+  opts = Object.assign({}, opts, this || {});
   const __improbableKeys = [];
   return Object.keys(sumTypes)
     .map(field => {
@@ -196,8 +206,8 @@ export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
     }, {__improbableKeys});
 }
 
-export function _condenseSchemaLevel(schema) {
-  const opts = Object.assign({}, _default.opts, this || {});
+function _condenseSchemaLevel(schema, opts = _default.opts) {
+  opts = Object.assign({}, opts, this || {});
   // cleanup the schema
   Object.keys(schema.sumTypes)
   .map(k => {
@@ -214,8 +224,9 @@ export function _condenseSchemaLevel(schema) {
   return schema;
 }
 
-export function _checkUpgradeType({currentType, currentValue, key, schema}) {
-  const opts = Object.assign({}, _default.opts, this || {});
+function _checkUpgradeType({currentType, currentValue, key, schema}, opts = _default.opts) {
+  opts = Object.assign({}, opts, this || {});
+
   var typeGuess = guessType(currentValue, currentType);
   // console.log(`Guessed type for ${key}=${typeGuess.type}`);
   if (currentValue && typeof(currentValue) === 'object' && Object.keys(currentValue).length >= 2) {

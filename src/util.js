@@ -1,6 +1,6 @@
 // jscs:disable safeContextKeyword
 
-export function getType(value) {
+function getType(value) {
   return value && Object.prototype.toString.call(value).replace('[object ', '').replace(']', '').toLowerCase();
 }
 
@@ -11,7 +11,7 @@ export function getType(value) {
  * ... Or just use as util, as needed, #JustDoIt
  *
  */
-export function toArray(list) {
+function toArray(list) {
   list = Array.isArray(list) ? list : this
   list = !list ? [] : list
   return Array.from && Array.from(list) || ['upgrade your browser, pfft']
@@ -27,7 +27,7 @@ export function toArray(list) {
  * @returns [function] comparer used in `Array.sort()`
  *
  */
-export function getSorter(key) {
+function getSorter(key) {
   const _englishSort         = (a, b) => (a[key] < b[key] ? -1 : (a[key] > b[key] ? 1 : 0))
   const _englishSortReversed = (a, b) => (a[key] >= b[key] ? -1 : (a[key] < b[key] ? 1 : 0))
 
@@ -42,7 +42,7 @@ export function getSorter(key) {
 /**
  *
  */
-export const Styles = {
+const Styles = {
   add: () => {
     let css = document.querySelector('style#json-editor')
     if (!css) {
@@ -66,7 +66,7 @@ export const Styles = {
  * Removes all children of @node
  *
  */
-export function removeAll(node) {
+function removeAll(node) {
   if (this instanceof NodeList) { node = this; }
 
   toArray(node)
@@ -83,7 +83,7 @@ export function removeAll(node) {
  * `Node.prototype.removeNode = removeNode;`
  *
  */
-export function removeNode(node) {
+function removeNode(node) {
   if (this instanceof Node) { node = this; }
 
   if (node.parentNode && node.parentNode.removeChild) {
@@ -96,12 +96,12 @@ export function removeNode(node) {
 /**
  * Totes obvi
  */
-export function getId({ id, _id, key }) { return id || _id || key; }
+function getId({ id, _id, key }) { return id || _id || key; }
 
 /**
  *
  */
-export const closest = (elem, selector, limit = null) => {
+const closest = (elem, selector, limit = null) => {
   if (limit !== null && limit <= 0) { return false }
 
   return !elem ? null
@@ -113,7 +113,7 @@ export const closest = (elem, selector, limit = null) => {
 /**
  * toBool converts anything to a boolean - see code for details
  */
-export const toBool = (str) => {
+const toBool = (str) => {
   if (typeof str === 'boolean') {
     return str
   }
@@ -126,7 +126,7 @@ export const toBool = (str) => {
   return str ? true : false
 }
 
-export const Errors = {
+const Errors = {
   SchemaDetectionError: _errorFactory('SchemaDetectionError'),
   MissingColumnsError: _errorFactory('MissingColumnsError'),
   // // SchemaDetectionError: _errorFactory('SchemaDetectionError'),
@@ -139,7 +139,7 @@ export const Errors = {
  * @param {any} name
  * @returns
  */
-export function _errorFactory(name) {
+function _errorFactory(name) {
   const newErr = (message, opts) => {
     if (typeof message !== 'string') {
       // no string msg supplied, use err name as message, useful for functional chains & promise signalling through 'catch'
@@ -164,9 +164,24 @@ export function _errorFactory(name) {
  * Warning: Private/local use only. Do not hoist.
  * *** Unsafe HTML/string handling ***
  */
-export const createElem = html => {
+const createElem = html => {
   // const container = document.createDocumentFragment()
   const div = document.createElement('div')
   div.innerHTML = html // Potential Security Exploit Vector!!!!!!
   return div.children.length === 1 ? div.children[0] : div
 }
+
+module.exports = {
+  _errorFactory,
+  closest,
+  createElem,
+  Errors,
+  getId,
+  getSorter,
+  getType,
+  removeAll,
+  removeNode,
+  Styles,
+  toArray,
+  toBool,
+};

@@ -6,7 +6,7 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/.bin/tape",
-      "stopOnEntry": true,
+      "stopOnEntry": false,
       "args": ["src/*/*.test.js", "src/*.test.js"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
@@ -31,7 +31,8 @@
       "sourceMaps": false,
       "outDir": null,
       "localRoot": "${workspaceRoot}",
-      "remoteRoot": null
+      "remoteRoot": null,
+      "internalConsoleOptions": "openOnSessionStart"
     },
     {
       "name": "Attach to Process",

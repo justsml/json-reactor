@@ -1,4 +1,4 @@
-require('babel-register');
+// require('babel-register');
 
 const test   = require('tape');
 const _      = require('lodash');
