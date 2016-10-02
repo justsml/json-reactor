@@ -1,6 +1,6 @@
 // jscs:disable safeContextKeyword
 
-function getType(value) {
+export function getType(value) {
   return value && Object.prototype.toString.call(value).replace('[object ', '').replace(']', '').toLowerCase();
 }
 
@@ -11,7 +11,7 @@ function getType(value) {
  * ... Or just use as util, as needed, #JustDoIt
  *
  */
-function toArray(list) {
+export function toArray(list) {
   list = Array.isArray(list) ? list : this
   list = !list ? [] : list
   return Array.from && Array.from(list) || ['upgrade your browser, pfft']
@@ -27,7 +27,7 @@ function toArray(list) {
  * @returns [function] comparer used in `Array.sort()`
  *
  */
-function getSorter(key) {
+export function getSorter(key) {
   const _englishSort         = (a, b) => (a[key] < b[key] ? -1 : (a[key] > b[key] ? 1 : 0))
   const _englishSortReversed = (a, b) => (a[key] >= b[key] ? -1 : (a[key] < b[key] ? 1 : 0))
 
@@ -42,7 +42,7 @@ function getSorter(key) {
 /**
  *
  */
-const Styles = {
+export const Styles = {
   add: () => {
     let css = document.querySelector('style#json-editor')
     if (!css) {
@@ -66,7 +66,7 @@ const Styles = {
  * Removes all children of @node
  *
  */
-function removeAll(node) {
+export function removeAll(node) {
   if (this instanceof NodeList) { node = this; }
 
   toArray(node)
@@ -83,7 +83,7 @@ function removeAll(node) {
  * `Node.prototype.removeNode = removeNode;`
  *
  */
-function removeNode(node) {
+export function removeNode(node) {
   if (this instanceof Node) { node = this; }
 
   if (node.parentNode && node.parentNode.removeChild) {
@@ -96,12 +96,12 @@ function removeNode(node) {
 /**
  * Totes obvi
  */
-function getId({ id, _id, key }) { return id || _id || key; }
+export function getId({ id, _id, key }) { return id || _id || key; }
 
 /**
  *
  */
-const closest = (elem, selector, limit = null) => {
+export const closest = (elem, selector, limit = null) => {
   if (limit !== null && limit <= 0) { return false }
 
   return !elem ? null
@@ -113,7 +113,7 @@ const closest = (elem, selector, limit = null) => {
 /**
  * toBool converts anything to a boolean - see code for details
  */
-const toBool = (str) => {
+export const toBool = (str) => {
   if (typeof str === 'boolean') {
     return str
   }
@@ -126,62 +126,13 @@ const toBool = (str) => {
   return str ? true : false
 }
 
-const Errors = {
-  SchemaDetectionError: _errorFactory('SchemaDetectionError'),
-  MissingColumnsError: _errorFactory('MissingColumnsError'),
-  // // SchemaDetectionError: _errorFactory('SchemaDetectionError'),
-}
-
-/**
- * errorFactory:
- * Literally an error factory
- *
- * @param {any} name
- * @returns
- */
-function _errorFactory(name) {
-  const newErr = (message, opts) => {
-    if (typeof message !== 'string') {
-      // no string msg supplied, use err name as message, useful for functional chains & promise signalling through 'catch'
-      opts     = message;
-      message  = name;
-    }
-    var error     = Error.call(this, message);
-    if (typeof opts === 'object') { Object.assign(this, opts); }
-    this.name     = name;
-    this.message  = error.message;
-    this.stack    = error.stack;
-  }
-  newErr.prototype              = Object.create(Error.prototype);
-  newErr.prototype.constructor  = newErr;
-  newErr.prototype.name         = name;
-  return newErr;
-}
-
-
-
 /**
  * Warning: Private/local use only. Do not hoist.
  * *** Unsafe HTML/string handling ***
  */
-const createElem = html => {
+export const createElem = html => {
   // const container = document.createDocumentFragment()
   const div = document.createElement('div')
   div.innerHTML = html // Potential Security Exploit Vector!!!!!!
   return div.children.length === 1 ? div.children[0] : div
 }
-
-module.exports = {
-  _errorFactory,
-  closest,
-  createElem,
-  Errors,
-  getId,
-  getSorter,
-  getType,
-  removeAll,
-  removeNode,
-  Styles,
-  toArray,
-  toBool,
-};

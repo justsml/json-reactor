@@ -1,36 +1,19 @@
 const _ = require('lodash');
-const {MissingColumnsError} = require('../Util');
-const {guessType, JS_ENUM_TYPE, JS_DEFAULT_TYPE, TYPE_COMPLEXITY_ORDER, isDate} = require('./SchemaTypes');
-const _default = {
-  opts: {
-    rows: 200,
-    cols: 200,
-    uniques: 1000,
-    enableEnumMinRows: 50, // min size of src rows b4 enums are detected
-    enumSize: 8,
-    enumStringSize: 32,
-    minFieldTypeCount: 50,
-  }
-};
+const {guessType, JS_ENUM_TYPE, JS_DEFAULT_TYPE, TYPE_COMPLEXITY_ORDER} = require('./SchemaTypes');
+const limits = {
+  rows: 200,
+  cols: 200,
+  uniques: 1000,
+  enableEnumMinRows: 50, // min size of src rows b4 enums are detected
+  enumSize: 8,
+  enumStringSize: 32,
+  minFieldTypeCount: 50,
+}
 
-module.exports = {
-  buildSchema,
-  _evaluateSchemaLevel,
-  _findEnumTypes,
-  _filterTypesByProbability,
-  _condenseSchemaLevel,
-  _checkUpgradeType,
-};
-
-
-function buildSchema(data, opts = _default.opts) {
-  opts = Object.assign({}, _default.opts, opts);
-  const schemaLevels = data.reduce(_evaluateSchemaLevel, opts);
-  const enumFields   = _findEnumTypes.call(opts, schemaLevels);
-  console.warn('\n\n enumFields:', enumFields, '\n\n');
-  const schema       = _filterTypesByProbability.call(opts, schemaLevels);
-  const {sizes}      = schemaLevels;
-  Object.assign(schema, {sizes});
+export function buildSchema(data) {
+  const schemaLevels = data.reduce(_evaluateSchemaLevel);
+  const enumFields   = _findEnumTypes(schemaLevels);
+  const schema       = _filterTypesByProbability(schemaLevels);
   // console.warn('\n\nenumFields', enumFields, '\n\n');
   enumFields.forEach(enumFld => {
     // console.warn(`\nenumFld: ${enumFld && enumFld.name}`, enumFld);
@@ -40,42 +23,22 @@ function buildSchema(data, opts = _default.opts) {
   return schema;
 }
 
-function _evaluateSchemaLevel(schema, obj, opts = _default.opts) {
-  opts = Object.assign({}, opts, this || {});
-  schema = Object.assign({sumTypes: {}, uniques: {}, sizes: {}, fieldCount: 0, columnCount: 0}, schema || {});
+export function _evaluateSchemaLevel(schema, obj) {
+  schema = Object.assign({sumTypes: {}, uniques: {}, fieldCount: 0, columnCount: 0}, schema || {});
   schema._fieldCount = schema._fieldCount === undefined ? 0 : schema._fieldCount;
   Object.keys(obj)
   .forEach((key, colIdx) => {
-    if (colIdx > opts.cols) { return; }
+    if (colIdx > limits.cols) { return; }
     let val = obj[key];
     const t = guessType(val, {type: 'null'});
     schema.sumTypes[key] = schema.sumTypes[key] || {};
     schema.uniques[key]  = schema.uniques[key]  || {};
-    schema.sizes[key]    = schema.sizes[key]    || {};
     // count the type
     schema.sumTypes[key][t.type] = !schema.sumTypes[key][t.type] ? 1 : ++schema.sumTypes[key][t.type];
-    if (['string', 'number', 'date'].indexOf(t.type) > -1) {
-      // Detect Sizes & data type dimensions
-      schema.sizes[key][t.type]    = schema.sizes[key][t.type] ? schema.sizes[key][t.type] : {min: Infinity, max: -Infinity};
-      // for enum detection -- add value to unique list - upto opts.uniques
-      if (t.type === 'number' && _.isFinite(val)) {
-        schema.sizes[key][t.type].min = _.min([schema.sizes[key][t.type].min, parseFloat(val)]);
-        schema.sizes[key][t.type].max = _.max([schema.sizes[key][t.type].max, parseFloat(val)]);
-      }
-      if (t.type === 'date' && isDate(val)) {
-        val = isDate(val);
-        schema.sizes[key][t.type].min = _.min([schema.sizes[key][t.type].min, val]);
-        schema.sizes[key][t.type].max = _.max([schema.sizes[key][t.type].max, val]);
-      }
-      if (t.type === 'string' && typeof val !== 'undefined') {
-        schema.sizes[key][t.type].min = _.min([schema.sizes[key][t.type].min, val.length]);
-        schema.sizes[key][t.type].max = _.max([schema.sizes[key][t.type].max, val.length]);
-      }
-    }
-    // Detect Enums
-    if ((typeof val === 'string' && val.length <= opts.enumStringSize) || _.isFinite(val)) {
+    // for enum detection -- add value to unique list - upto limits.uniques
+    if ((typeof val === 'string' && val.length <= limits.enumStringSize) || _.isFinite(val)) {
       val = typeof val === 'string' ? val.toLowerCase() : val;
-      if (Object.keys(schema.uniques[key]).length <= opts.uniques) {
+      if (Object.keys(schema.uniques[key]).length <= limits.uniques) {
         schema.uniques[key][val] = !schema.uniques[key][val] ? 1 : ++schema.uniques[key][val];
       }
     }
@@ -124,21 +87,20 @@ _fieldCount: 54 }
  * @param {any} {uniques = {}}
  * @returns
  */
-function _findEnumTypes({uniques = {}}, opts = _default.opts) {
-  opts = Object.assign({}, opts, this || {});
+export function _findEnumTypes({uniques = {}}) {
   return Object.keys(uniques)
     .map(field => {
       let fieldValCounts = uniques[field];
       let fieldValList = Object.keys(fieldValCounts)
-        // min # of occurances for individual token/value must exceed this opts.enableEnumMinRows setting -
+        // min # of occurances for individual token/value must exceed this limits.enableEnumMinRows setting -
         //TODO: might need to change this to filter before we even get into this `.map` closure or maybe using something like colSum below - i.e. total # of values between range of hits.
-        .filter(commonValue => fieldValCounts[commonValue] >= opts.enableEnumMinRows);
+        .filter(commonValue => fieldValCounts[commonValue] >= limits.enableEnumMinRows);
       let colSum = fieldValList
         .reduce((sum, valIdx) => {
           return sum + fieldValCounts[valIdx];
         }, 0);
-      if (colSum <= opts.enableEnumMinRows) { return null; }
-      if (fieldValList.length <= opts.enumSize) {
+      if (colSum <= limits.enableEnumMinRows) { return null; }
+      if (fieldValList.length <= limits.enumSize) {
         // we have enum - maybe!!!
         return {name: field, type: 'string', enum: fieldValList.sort(), __commonFieldTotal: colSum};
       }
@@ -154,8 +116,7 @@ function _findEnumTypes({uniques = {}}, opts = _default.opts) {
  * @param {number} [percentMin=10]
  * @returns
  */
-function _filterTypesByProbability({sumTypes = {}}, percentMin = 50, opts = _default.opts) {
-  opts = Object.assign({}, opts, this || {});
+export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
   const __improbableKeys = [];
   return Object.keys(sumTypes)
     .map(field => {
@@ -169,13 +130,13 @@ function _filterTypesByProbability({sumTypes = {}}, percentMin = 50, opts = _def
         .reduce((sum, valIdx) => {
           return sum + fieldTypeCounts[valIdx];
         }, 0);
-      if (colSum < opts.minFieldTypeCount) {
+      if (colSum < limits.minFieldTypeCount) {
         __improbableKeys.push(field);
         return null;
       }
       percentMin = percentMin > 1 ? percentMin / 100.0 : percentMin;
       const pctColSum = type => {
-        return fieldTypeCounts[type] > opts.minFieldTypeCount
+        return fieldTypeCounts[type] > limits.minFieldTypeCount
                && fieldTypeCounts[type] > (colSum * percentMin);
       };
 
@@ -206,8 +167,7 @@ function _filterTypesByProbability({sumTypes = {}}, percentMin = 50, opts = _def
     }, {__improbableKeys});
 }
 
-function _condenseSchemaLevel(schema, opts = _default.opts) {
-  opts = Object.assign({}, opts, this || {});
+export function _condenseSchemaLevel(schema) {
   // cleanup the schema
   Object.keys(schema.sumTypes)
   .map(k => {
@@ -224,9 +184,7 @@ function _condenseSchemaLevel(schema, opts = _default.opts) {
   return schema;
 }
 
-function _checkUpgradeType({currentType, currentValue, key, schema}, opts = _default.opts) {
-  opts = Object.assign({}, opts, this || {});
-
+export function _checkUpgradeType({currentType, currentValue, key, schema}) {
   var typeGuess = guessType(currentValue, currentType);
   // console.log(`Guessed type for ${key}=${typeGuess.type}`);
   if (currentValue && typeof(currentValue) === 'object' && Object.keys(currentValue).length >= 2) {
