@@ -20,27 +20,28 @@ export const TYPE_COMPLEXITY_ORDER  = [
 export const JS_TYPES = TYPE_COMPLEXITY_ORDER;
 
 const patterns = {
-  // date: [/^[0-3]?[0-9]\/[0-3]?[0-9]\/(?:[0-9]{2})?[0-9]{2}$/],
   boolean: [/^(true|false)$/i, /^(yes|no)$/i, /^(Y|N)$/i, /^(1|0)$/i],
   number: [/^\$?[\.,\d]*$/]
 }
 export const isBoolean = str => typeof str !== 'object' && (str === true || str === false || patterns.boolean.some(p => p.test(String(str))));
 export const isNumber  = str => typeof str !== 'object' && (_.isFinite(str) || patterns.number.some(p => p.test(String(str))));
-export const isDate    = str => {
+export const isDate    = str => toDate(str) ? true : false;
+export const toDate    = str => {
   if (typeof str === 'object' && str.toISOString)  { return true;  }
-  if (str && (str.length < 6 || str.length >= 30)) { return false; }
+  if (str && (str.length < 5 || str.length >= 30)) { return false; }
   let date, validPatterns = ['MMM DD, YYYY', 'MMMM DD, YYYY',
     'MM-DD-YYYY', 'YYYY-MM-DD', 'MM/DD/YYYY', 'MM/DD/YY'];
   try {
     date = new Date(Date.parse(str));
     if (date && date.toISOString()) {
-      return true;
+      return date;
     }
   } catch (e) {
     // nada
   }
   // not native date able -- try moment & validPatterns
-  return moment.isDate(moment(str, validPatterns));
+  date = moment(str, validPatterns);
+  return moment.isDate(date) ? date : null;
 }
 
 export function guessType(value, defaultValue = JS_DEFAULT_TYPE) {

@@ -1,7 +1,7 @@
 require('babel-register');
 
 const test   = require('tape');
-const {isDate, isNumber, isBoolean, guessType} = require('./SchemaTypes');
+const {isDate, toDate, isNumber, isBoolean, guessType} = require('./SchemaTypes');
 
 test('fuzzy date checker', t => {
   //Valid Dates
@@ -16,6 +16,21 @@ test('fuzzy date checker', t => {
   t.false(isDate('Hi 12-31 Hi! 07:00:00.000'))
   t.false(isDate('20:12'))
   t.false(isDate('31/31/31'))
+  t.end();
+})
+
+test('fuzzy date checker', t => {
+  //Valid Dates
+  t.equal(toDate('2000-12-31T07:00:00.000Z').getFullYear(), 2000)
+  t.equal(toDate('12/31/2000').getFullYear(), 2000)
+  t.equal(toDate('2000-12-31').getFullYear(), 2000)
+  t.equal(toDate('12-31-2000').getFullYear(), 2000)
+  t.equal(toDate('Dec 31, 2000').getFullYear(), 2000)
+  t.equal(toDate('December 31, 2000').getFullYear(), 2000)
+  t.equal(toDate('2012-04-23T16:11:31-07:00').getFullYear(), 2012)
+  t.not(toDate('Hi 12-31 Hi! 07:00:00.000'))
+  t.not(toDate('20:12'))
+  t.not(toDate('31/31/31'))
   t.end();
 })
 
