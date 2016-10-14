@@ -1,16 +1,27 @@
 /*eslint no-unused-vars: 1*/
 import { createElem, closest, removeAll, removeNode, toBool } from '../Util'
 
-export function FieldEditor({ key, node, elem, parent = null, path = [], type = 'string', depth = 0 }) {
+export function KeyValueEditor({ key, node, elem, parent = null, path = [], type = 'string', depth = 0 }) {
 
   const getArrayButtons = ({idx = -1}) => createElem(`<div class="j-array-buttons">
     <button action="add" idx="${idx}">+</button>
     <button action="remove" idx="${idx}">-</button>
   </div>`)
   const form = createElem(`<section class="j-edit j-side text-left" key="${key}" type="${type}" depth="${depth}" path="${Array.isArray(path) ? path.join('::') : path}">
-    <form class="field-editor">
+    <form class="key-value-editor">
       <fieldset>
-        <label>${key}</label>
+        <label>Name</label>
+        <input type="text" name="name" class="name" value="${key}" />
+      </fieldset>
+      <fieldset>
+        <label>Type</label>
+        <select rows="1" name="type">
+          <option value="string">text</option>
+          <option value="boolean">yes/no</option>
+          <option value="number">number</option>
+          <option value="object">object/hash/map/key-val</option>
+          <option value="array">list</option>
+        </select>
       </fieldset>
       <fieldset>
         <label>Value</label>

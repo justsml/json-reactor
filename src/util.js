@@ -1,4 +1,6 @@
 // jscs:disable safeContextKeyword
+const moment = require('moment');
+const _ = require('lodash');
 
 export function getType(value) {
   return value && Object.prototype.toString.call(value).replace('[object ', '').replace(']', '').toLowerCase();
@@ -46,7 +48,7 @@ export const Styles = {
   add: () => {
     let css = document.querySelector('style#json-editor')
     if (!css) {
-      const styles  = require('!css!less!./style.less')
+      const styles  = require('!css!less!./Style.less')
       css           = document.createElement('style')
       css.id        = 'json-editor'
       css.innerHTML = styles
@@ -135,4 +137,29 @@ export const createElem = html => {
   const div = document.createElement('div')
   div.innerHTML = html // Potential Security Exploit Vector!!!!!!
   return div.children.length === 1 ? div.children[0] : div
+}
+
+const patterns = {
+  boolean: [/^(true|false)$/i, /^(yes|no)$/i, /^(Y|N)$/i, /^(1|0)$/i],
+  number: [/^\$?[\.,\d]*$/]
+}
+export const isBoolean = str => typeof str !== 'object' && (str === true || str === false || patterns.boolean.some(p => p.test(String(str))));
+export const isNumber  = str => typeof str !== 'object' && (_.isFinite(str) || patterns.number.some(p => p.test(String(str))));
+export const isDate    = str => toDate(str) ? true : false;
+export const toDate    = str => {
+  if (typeof str === 'object' && str.toISOString)  { return true;  }
+  if (str && (str.length < 5 || str.length >= 30)) { return false; }
+  let date, validPatterns = ['MMM DD, YYYY', 'MMMM DD, YYYY',
+    'MM-DD-YYYY', 'YYYY-MM-DD', 'MM/DD/YYYY', 'MM/DD/YY'];
+  try {
+    date = new Date(Date.parse(str));
+    if (date && date.toISOString()) {
+      return date;
+    }
+  } catch (e) {
+    // nada
+  }
+  // not native date able -- try moment & validPatterns
+  date = moment(str, validPatterns);
+  return moment.isDate(date) ? date : null;
 }

@@ -1,9 +1,9 @@
 /*eslint no-unused-vars: 1*/
-// import { config }                         from './config'
+// import { config }                      from '../config'
 import { createElem, closest,
-          removeAll, removeNode } from './Util'
-import { arrows, ux }                     from './SvgIcons'
-import { CustomEvent as _CustomEvent }    from './CustomEvent'
+          removeAll, removeNode }         from '../Util'
+import { arrows, ux }                     from '../SvgIcons'
+import { CustomEvent as _CustomEvent }    from '../CustomEvent'
 // _CustomEvent should auto-attach the object to the window... if not make init function
 
 export function KeyList({ data, parent, path = [], depth = 0, canAdd = true }) {

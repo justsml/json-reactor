@@ -1,16 +1,15 @@
 {
-	// See http://go.microsoft.com/fwlink/?LinkId=759670
-	// for the documentation about the jsconfig.json format
-	"compilerOptions": {
-		"module": "commonjs",
-    "target": "ES6"
-	},
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES6",
+    "allowSyntheticDefaultImports": true
+  },
   "exclude": [
-		"node_modules",
-		"bower_components",
-		"jspm_packages",
-		"dist",
-		"tmp",
-		"temp"
-	]
+    "node_modules",
+    "bower_components",
+    "jspm_packages",
+    "dist",
+    "tmp",
+    "temp"
+  ]
 }

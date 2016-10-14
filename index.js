@@ -1,6 +1,10 @@
-import {KeyList}      from './src/KeyList'
-import {FieldEditor}  from './src/FieldEditor'
-import {Styles}       from './src/Util'
+import {KeyList}            from './src/editor/KeyList'
+import {FieldEditor}        from './src/editor/FieldEditor'
+import {KeyValueEditor}     from './src/editor/KeyValueEditor'
+import {Styles}             from './src/Util'
+import {Schema}             from './src/schema/Schema'
+
+export const schema = Schema;
 
 export function create(elem, config) {
   if (!elem)   { throw new Error('JsonEditor instance requires 1st param `elem`') }
@@ -24,7 +28,8 @@ export function create(elem, config) {
     if (currForm && currForm.parentNode) {
       currForm.parentNode.removeChild(currForm)
     }
-    elem.appendChild(FieldEditor({
+    let fieldCreator = config.schema ? KeyValueEditor : FieldEditor;
+    elem.appendChild(fieldCreator({
       depth:  target.depth || 1,
       elem:   target,
       key:    target.key,

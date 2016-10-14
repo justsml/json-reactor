@@ -13,7 +13,7 @@
     </style>
   </head>
 
-  <body>
+  <body onload="init()">
     <div class="container">
       <div class="well well-sm text-center">
         <h2>
@@ -52,19 +52,31 @@
           {title: 'Type', sort: 'type', render: ({row}) => row.type && row.type.toLowerCase() || 'N/A'},
         ],
         metadata: {
-          foo: 'bar', 
+          foo: 'bar',
           bar: 'foo',
           baz: 'zab',
-          sequence: [1, 2, 3, 4, 5], 
+          sequence: [1, 2, 3, 4, 5],
           abcs: 'abcdefg'.split('')
         }
       };
       function init() {
-        const jsonText    = document.querySelector('.json-string')
-        const jsonInput   = jsonText && jsonText.value && jsonText.value.length > 5 ? JSON.parse(jsonText.value) : config
-        jsonEditor  = JsonEditor.create(document.querySelector('.results-view'), jsonInput)
-        const txt = document.querySelector('textarea.json-string')
-        txt.value = JSON.stringify(jsonInput, null, 2)
+        const jsonText    = document.querySelector('textarea.json-string')
+        let jsonInput;
+        try {
+          jsonInput = jsonText && jsonText.value && jsonText.value.length > 5 ? JSON.parse(jsonText.value) : ['"no data"'];
+          let schema = JsonEditor.schema(jsonInput);
+          jsonEditor  = JsonEditor.create(document.querySelector('.results-view'), schema)
+          // ^^ convert to schema ^^
+        } catch (e) {
+          if (e instanceof SyntaxError) {
+            console.warn('JSON Parsing Error', e);
+            alert('Check yo JSON, man!\n\n' + JSON.stringify(e.stack, null, 1));
+          } else {
+            console.error('Unexpected FAIL Making The JSON', e);
+          }
+        }
+
+        jsonText.value = JSON.stringify(jsonInput, null, 2)
       }
       setTimeout(init, 250)
     </script>
