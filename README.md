@@ -1,19 +1,21 @@
 # Json Editor
 
+[![Build Status](https://travis-ci.org/justsml/json-editor.svg?branch=master)](https://travis-ci.org/justsml/json-editor)
+
 > JSON Object Editor
 **Pure Javascript.**
 *That uncut sh*t.*
 
 ## Vitals
 
-**Full Lib w/ Schema and UI bits**
 
 **Size** (gzipped/minified): **100Kb**/200Kb
-
+**Full Lib w/ Schema and UI bits**
 
 ## Summary
 
-
+Edit JSON using a friendly Web GUI!
+Freeform or schema-bound modes.
 
 ## Commands
 
@@ -23,8 +25,11 @@ npm run build
 
 ```
 
-#### Example
+### Example
 
+#### See `spec/index.html`
+
+Short example:
 
 ```js
 const config = {
