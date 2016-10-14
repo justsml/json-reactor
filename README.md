@@ -1,6 +1,8 @@
 # Json Editor
 
 [![Build Status](https://travis-ci.org/justsml/json-editor.svg?branch=master)](https://travis-ci.org/justsml/json-editor)
+[![GitHub stars](https://img.shields.io/github/stars/justsml/json-editor.svg)](https://github.com/justsml/json-editor/stargazers)
+[![Github Releases](https://img.shields.io/github/downloads/justsml/json-editor/latest/total.svg?maxAge=1592000)]()
 
 > JSON Object Editor
 **Pure Javascript.**
