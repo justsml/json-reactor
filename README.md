@@ -6,7 +6,9 @@
 
 ## Vitals
 
-**Size** (gzipped/minified): **4Kb**/12Kb
+**Full Lib w/ Schema and UI bits**
+
+**Size** (gzipped/minified): **100Kb**/200Kb
 
 
 ## Summary
