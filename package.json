@@ -1,21 +1,21 @@
 {
-  "name": "json-editor",
-  "version": "1.5.0",
+  "name": "json-reactor",
+  "version": "1.5.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/justsml/json-editor.git"
+    "url": "https://github.com/justsml/json-reactor.git"
   },
   "bugs": {
-    "url": "https://github.com/justsml/json-editor/issues"
+    "url": "https://github.com/justsml/json-reactor/issues"
   },
-  "homepage": "https://github.com/justsml/json-editor",
+  "homepage": "https://github.com/justsml/json-reactor",
   "babel": {
     "presets": [
       "es2015"
     ]
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=6.1.0"
   },
   "description": "A JSON Object Editor Component. Pure JavaScript, NO jQuery. Built w/ WebPack. Wrappers For React, Angular, Dojo coming soon!",
   "main": "index.js",
@@ -45,16 +45,19 @@
     "http-server": "0.9.0",
     "less": "2.6.1",
     "less-loader": "2.2.3",
-    "lodash": "^4.16.1",
+    "lodash": "4.16.1",
     "postcss-loader": "0.9.1",
-    "st": "1.1.0",
     "style-loader": "0.13.1",
-    "moment": "^2.15.1",
-    "tap-summary": "^3.0.1",
-    "tape": "^4.6.0",
+    "moment": "2.15.1",
+    "tap-summary": "3.0.1",
+    "tape": "4.6.0",
     "webpack": "1.13.0"
   },
   "dependencies": {
-    "junk-parser": "^1.0.0"
+    "junk-parser": "1.0.0",
+    "react": "15.3.2",
+    "react-addons-shallow-compare": "15.3.2",
+    "react-dom": "15.3.2",
+    "react-sortable-tree": "0.1.2"
   }
 }
