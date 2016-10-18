@@ -1,5 +1,6 @@
 import React from 'react';
 import SortableTree, { toggleExpandedForAll } from 'react-sortable-tree';
+import {Branch} from './Branch';
 
 export const DataTreeFactory = ({ schema, maxDepth = 0, canAdd = true }) => {
   const DataTree = React.createClass({
@@ -199,11 +200,4 @@ export const DataTreeFactory = ({ schema, maxDepth = 0, canAdd = true }) => {
   return DataTree;
 };
 
-export const _schemaToTree = (schema) => {
-  return Object.keys(schema)
-  .map(key => {
-    let typeDef = schema[key];
 
-    // 'type': 'object'
-  })
-}
