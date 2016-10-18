@@ -3,7 +3,7 @@ const {guessType, JS_ENUM_TYPE, JS_DEFAULT_TYPE, TYPE_COMPLEXITY_ORDER} = requir
 const limits = {
   rows: 200,
   cols: 200,
-  uniques: 1000,
+  ___uniques: 1000,
   enableEnumMinRows: 50, // min size of src rows b4 enums are detected
   enumSize: 8,
   enumStringSize: 32,
@@ -24,32 +24,34 @@ export function buildSchema(data) {
 }
 
 export function _evaluateSchemaLevel(schema, obj) {
-  schema = Object.assign({sumTypes: {}, uniques: {}, fieldCount: 0, columnCount: 0}, schema || {});
-  schema._fieldCount = schema._fieldCount === undefined ? 0 : schema._fieldCount;
+  schema = Object.assign({___sumTypes: {}, ___uniques: {}, ___fieldCount: 0, ___columnCount: 0}, schema || {});
+  schema.___fieldCount = schema.___fieldCount === undefined ? 0 : schema.___fieldCount;
   Object.keys(obj)
   .forEach((key, colIdx) => {
     if (colIdx > limits.cols) { return; }
     let val = obj[key];
     const t = guessType(val, {___type: 'null'});
-    schema.sumTypes[key] = schema.sumTypes[key] || {};
-    schema.uniques[key]  = schema.uniques[key]  || {};
+    schema.___sumTypes[key] = schema.___sumTypes[key] || {};
+    schema.___uniques[key]  = schema.___uniques[key]  || {};
     // count the ___type
-    schema.sumTypes[key][t.___type] = !schema.sumTypes[key][t.___type] ? 1 : ++schema.sumTypes[key][t.___type];
-    // for enum detection -- add value to unique list - upto limits.uniques
+    schema.___sumTypes[key][t.___type] = !schema.___sumTypes[key][t.___type] ? 1 : ++schema.___sumTypes[key][t.___type];
+    // for enum detection -- add value to unique list - upto limits.___uniques
     if ((typeof val === 'string' && val.length <= limits.___enumStringSize) || _.isFinite(val)) {
       val = typeof val === 'string' ? val.toLowerCase() : val;
-      if (Object.keys(schema.uniques[key]).length <= limits.uniques) {
-        schema.uniques[key][val] = !schema.uniques[key][val] ? 1 : ++schema.uniques[key][val];
+      if (Object.keys(schema.___uniques[key]).length <= limits.___uniques) {
+        schema.___uniques[key][val] = !schema.___uniques[key][val] ? 1 : ++schema.___uniques[key][val];
       }
+    // } else if (typeof val === 'object') {
+    //   schema[key] = _evaluateSchemaLevel(schema[key],
     }
-    // console.warn(`schema.sumTypes[${key}]`, schema.sumTypes[key]);
-    schema.fieldCount += 1;
+    // console.warn(`schema.___sumTypes[${key}]`, schema.___sumTypes[key]);
+    schema.___fieldCount += 1;
     // schema[key] = _checkUpgradeType({schema, currentType: schema[key], currentValue: obj[key], key: key});
   })
   return schema;
 }
 /*
-{ sumTypes:
+{ ___sumTypes:
   { id: { null: 9 },
     ___name: { boolean: 1, null: 4, string: 4 },
     email: { null: 1, string: 8 },
@@ -58,7 +60,7 @@ export function _evaluateSchemaLevel(schema, obj) {
     cancelled: { date: 1, null: 6 },
     nullVal: { null: 1 },
     undefVal: { null: 1 } },
-uniques:
+___uniques:
   { id:
     { '1': 1,
       '2': 1,
@@ -77,20 +79,20 @@ uniques:
     nullVal: { null: 1 },
     undefVal: { undefined: 1 }
  },
-_fieldCount: 54 }
+___fieldCount: 54 }
  */
 
 /**
  * Finds if columns meet criteria for enums, restricted lists of string (or int) values
  *
  * @export
- * @param {any} {uniques = {}}
+ * @param {any} {___uniques = {}}
  * @returns
  */
-export function _findEnumTypes({uniques = {}}) {
-  return Object.keys(uniques)
+export function _findEnumTypes({___uniques = {}}) {
+  return Object.keys(___uniques)
     .map(field => {
-      let fieldValCounts = uniques[field];
+      let fieldValCounts = ___uniques[field];
       let fieldValList = Object.keys(fieldValCounts)
         // min # of occurances for individual token/value must exceed this limits.enableEnumMinRows setting -
         //TODO: might need to change this to filter before we even get into this `.map` closure or maybe using something like colSum below - i.e. total # of values between range of hits.
@@ -112,15 +114,15 @@ export function _findEnumTypes({uniques = {}}) {
 /**
  *
  * @export
- * @param {any} {sumTypes = {}}
+ * @param {any} {___sumTypes = {}}
  * @param {number} [percentMin=10]
  * @returns
  */
-export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
+export function _filterTypesByProbability({___sumTypes = {}}, percentMin = 50) {
   const ___improbableKeys = [];
-  return Object.keys(sumTypes)
+  return Object.keys(___sumTypes)
     .map(field => {
-      let fieldTypeCounts = sumTypes[field];
+      let fieldTypeCounts = ___sumTypes[field];
       let fieldTypeList = Object.keys(fieldTypeCounts)
         .filter(___type => ['undefined', 'null'].indexOf(___type) === -1)
         .sort((a, b) => {
@@ -169,16 +171,16 @@ export function _filterTypesByProbability({sumTypes = {}}, percentMin = 50) {
 
 export function _condenseSchemaLevel(schema) {
   // cleanup the schema
-  Object.keys(schema.sumTypes)
+  Object.keys(schema.___sumTypes)
   .map(k => {
     //TODO: Add null counter to prevent false-positive enum detections
-    let setToEnumLimit = (schema._fieldCount * 0.5);// 5% default
-    if (['number', 'string'].indexOf(schema[k].___type) > -1 && schema.sumTypes[k].size <= setToEnumLimit) {
+    let setToEnumLimit = (schema.___fieldCount * 0.5);// 5% default
+    if (['number', 'string'].indexOf(schema[k].___type) > -1 && schema.___sumTypes[k].size <= setToEnumLimit) {
       schema[k] = JS_ENUM_TYPE;
-      schema[k].___enum = Array.from(schema.sumTypes[k]).sort();
+      schema[k].___enum = Array.from(schema.___sumTypes[k]).sort();
       // console.log(`Enumified ${k}=${schema[k].___enum.join(', ')}`);
     } else {
-      schema.sumTypes[k] = null;//Array.from(schema.sumTypes[k]).sort().join(', '); //temp for debugging// set to null or remove later
+      schema.___sumTypes[k] = null;//Array.from(schema.___sumTypes[k]).sort().join(', '); //temp for debugging// set to null or remove later
     }
   })
   return schema;
