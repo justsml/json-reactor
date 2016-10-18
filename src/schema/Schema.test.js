@@ -16,7 +16,7 @@ const sampleUsers  = require('../../test/sample-users.json');
 test('schema: auto-detect from sample array #1', t => {
   const schema = buildSchema(sampleIncomplete);
   let count = Object.keys(schema)
-    .filter(key => key.indexOf('__') === -1)
+    .filter(key => key.indexOf('___') === -1)
     .length;
   t.equals(count, 0);
   t.end();
@@ -26,13 +26,13 @@ test('schema: auto-detect from sample array #2', t => {
   const schema = buildSchema(sample1);
 
   // console.warn('SCHEMAAAAAH:', schema)
-  t.equals(schema.balance.type, 'number');
-  t.equals(schema.latLon.type, 'string');
-  t.equals(schema.notes.type, 'string');
-  t.equals(schema.externalId.type, 'string');
-  t.equals(schema.pin.type, 'number');
-  t.equals(schema.company.type, 'string');
-  t.equals(schema.signup.type, 'date');
+  t.equals(schema.balance.___type, 'number');
+  t.equals(schema.latLon.___type, 'string');
+  t.equals(schema.notes.___type, 'string');
+  t.equals(schema.externalId.___type, 'string');
+  t.equals(schema.pin.___type, 'number');
+  t.equals(schema.company.___type, 'string');
+  t.equals(schema.signup.___type, 'date');
   t.end();
 })
 
@@ -40,14 +40,16 @@ test('schema: auto-detect from sample array #2', t => {
 test('schema: auto-detect from sample array #2', t => {
   const schema = buildSchema(sampleUsers);
 
-  // console.warn('SCHEMAAAAAH:', schema)
-  t.true(schema.name, 'has name');
-  // t.equals(schema.latLon.type, 'string');
-  // t.equals(schema.notes.type, 'string');
-  // t.equals(schema.externalId.type, 'string');
-  // t.equals(schema.pin.type, 'number');
-  // t.equals(schema.company.type, 'string');
-  // t.equals(schema.signup.type, 'date');
+  console.warn('SCHEMAAAAAH:', schema)
+  t.true(schema.___name, 'has name');
+  t.equals(schema.parent._id.___type, 'number');
+
+  // t.equals(schema.latLon.___type, 'string');
+  // t.equals(schema.notes.___type, 'string');
+  // t.equals(schema.externalId.___type, 'string');
+  // t.equals(schema.pin.___type, 'number');
+  // t.equals(schema.company.___type, 'string');
+  // t.equals(schema.signup.___type, 'date');
   t.end();
 })
 
@@ -65,9 +67,9 @@ test('schema: enum detection', t => {
   let enums = _findEnumTypes({uniques});
   t.equals(enums.length, 1);
   // console.warn('enums', enums);
-  t.assert(enums[0].enum, 'has a status enum');
-  t.equals(enums[0].enum.length, 4);
-  t.equal(enums[0].name, 'status');
+  t.assert(enums[0].___enum, 'has a status enum');
+  t.equals(enums[0].___enum.length, 4);
+  t.equal(enums[0].___name, 'status');
   t.end();
 })
 
@@ -84,10 +86,10 @@ test('schema: _filterTypesByProbability', t => {
   const fields = _filterTypesByProbability({sumTypes}, 90);
 
   // console.warn('\n_filterTypesByProbability', fields, '\n');
-  t.equals(fields.id.type, 'number');
-  t.equals(fields.email.type, 'string');
-  t.equals(fields.active.type, 'boolean');
-  t.equals(fields.signup.type, 'date');
+  t.equals(fields.id.___type, 'number');
+  t.equals(fields.email.___type, 'string');
+  t.equals(fields.active.___type, 'boolean');
+  t.equals(fields.signup.___type, 'date');
   t.end();
 })
 
@@ -125,10 +127,10 @@ function fixColArrayData({cols, data}) {
 //   .map(k => {
 //     //TODO: Add null counter to prevent false-positive enum detections
 //     let setToEnumLimit = (schema._totalRecords * 0.5);// 5% default
-//     if (['number', 'string'].indexOf(schema[k].type) > -1 && schema._uniques[k].size <= setToEnumLimit) {
+//     if (['number', 'string'].indexOf(schema[k].___type) > -1 && schema._uniques[k].size <= setToEnumLimit) {
 //       schema[k] = JS_ENUM_TYPE;
-//       schema[k].enum = Array.from(schema._uniques[k]).sort();
-//       console.log(`Enumified ${k}=${schema[k].enum.join(', ')}`);
+//       schema[k].___enum = Array.from(schema._uniques[k]).sort();
+//       console.log(`Enumified ${k}=${schema[k].___enum.join(', ')}`);
 //     } else {
 //       schema._uniques[k] = null;//Array.from(schema._uniques[k]).sort().join(', '); //temp for debugging// set to null or remove later
 //     }
@@ -138,7 +140,7 @@ function fixColArrayData({cols, data}) {
 
 // export function _checkUpgradeType({currentType, currentValue, key, schema}) {
 //   var typeGuess = guessType({currentType, currentValue});
-//   // console.log(`Guessed type for ${key}=${typeGuess.type}`);
+//   // console.log(`Guessed type for ${key}=${typeGuess.___type}`);
 //   if (typeof(currentValue) === 'object' && currentValue.toString() === '[object Object]' && Object.keys(currentValue).length >= 2) {
 //     return _evaluateSchemaLevel(schema[key], currentValue)
 //   }
