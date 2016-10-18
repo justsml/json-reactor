@@ -1,14 +1,14 @@
 const {isBoolean, isNumber, isDate} = require('../Util');
 const _                             = require('lodash');
 
-export const JS_DEFAULT_TYPE     = { ___type: 'object',  ___default: null };
-export const JS_BOOLEAN_TYPE     = { ___type: 'boolean', ___default: null };
-export const JS_NUMBER_TYPE      = { ___type: 'number',  ___default: null, ___min: -Infinity, ___max: Infinity };
-export const JS_STRING_TYPE      = { ___type: 'string',  ___default: null, ___min: 0,         ___max: Infinity };
-export const JS_ENUM_TYPE        = { ___type: 'string',  ___default: null, ___enum: [] };
-export const JS_ARRAY_TYPE       = { ___type: 'array',   ___default: null };
-export const JS_OBJECT_TYPE      = { ___type: 'object',  ___default: null };
-export const JS_DATE_TYPE        = { ___type: 'date',    ___default: null };
+export const JS_DEFAULT_TYPE     = { 'type': 'object', default: null };
+export const JS_BOOLEAN_TYPE     = { 'type': 'boolean', default: null };
+export const JS_NUMBER_TYPE      = { 'type': 'number',  default: null, min: -Infinity, max: Infinity };
+export const JS_STRING_TYPE      = { 'type': 'string',  default: null, min: 0, max: Infinity };
+export const JS_ENUM_TYPE        = { 'type': 'string',  default: null, enum: [] };
+export const JS_ARRAY_TYPE       = { 'type': 'array',   default: null };
+export const JS_OBJECT_TYPE      = { 'type': 'object',  default: null };
+export const JS_DATE_TYPE        = { 'type': 'date',    default: null };
 export const TYPE_COMPLEXITY_ORDER  = [
   JS_BOOLEAN_TYPE,
   JS_NUMBER_TYPE,
