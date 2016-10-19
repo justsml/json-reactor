@@ -1,9 +1,18 @@
 import React from 'react';
+import {render} from 'react-dom';
 import SortableTree, { toggleExpandedForAll } from 'react-sortable-tree';
-import {Branch} from './Branch';
+import {Branch, schemaToTree} from './Branch';
+import './style.less';
 
-export const DataTreeFactory = ({ schema, maxDepth = 0, canAdd = true }) => {
+export const mountTree = (root, data) => {
+  const DataTree = DataTreeFactory({});
+
+  return render(<DataTree data={data} />, root);
+}
+
+export const DataTreeFactory = ({ data, maxDepth = 0, canAdd = true }) => {
   const DataTree = React.createClass({
+
 
     // updateTreeData(treeData) {
     //   this.setState({ treeData });
@@ -184,7 +193,7 @@ export const DataTreeFactory = ({ schema, maxDepth = 0, canAdd = true }) => {
         searchString: '',
         searchFocusIndex: 0,
         searchFoundCount: null,
-        treeData: _schemaToTree(schema),
+        treeData: data || this.props.data,
         editObjectJson: this.props.editObjectJson !== false,
         enforceSchema: this.props.enforceSchema || false,
       }

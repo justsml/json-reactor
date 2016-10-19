@@ -46,18 +46,18 @@ export function getSorter(key) {
  */
 export const Styles = {
   add: () => {
-    let css = document.querySelector('style#json-editor')
+    let css = document.querySelector('style#json-reactor')
     if (!css) {
       const styles  = require('!css!less!./Style.less')
       css           = document.createElement('style')
-      css.id        = 'json-editor'
+      css.id        = 'json-reactor'
       css.innerHTML = styles
       document.head.appendChild(css)
     }
   },
 
   remove: () => {
-    let css = document.querySelector('style#json-editor')
+    let css = document.querySelector('style#json-reactor')
     if (css && css.parentNode) { css.parentNode.removeChild(css) }
   },
 }

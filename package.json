@@ -25,7 +25,7 @@
     "build-dev": "NODE_ENV=development webpack --config ./webpack.config.js",
     "build": "NODE_ENV=production webpack --config ./webpack.config.js",
     "watch": "npm run build-dev && NODE_ENV=development webpack --watch --config ./webpack.config.js",
-    "compress": "uglifyjs --compress --mangle --screw-ie8 -o ./dist/json-editor.min.js -- ./dist/json-editor.bundle.js",
+    "compress": "uglifyjs --compress --mangle --screw-ie8 -o ./dist/json-reactor.min.js -- ./dist/json-reactor.bundle.js",
     "test-e2e-debug": "casperjs test --verbose --log-level=debug ./tests/e2e-tests.js",
     "test-e2e": "casperjs test --verbose ./tests/e2e-tests.js",
     "test": "tape ./src/*/*.test.js ./src/*.test.js | tap-summary"

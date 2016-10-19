@@ -1,7 +1,7 @@
-require('babel-register');
+//require('babel-register');
 
 const test   = require('tape');
-const {Branch, schemaToTree} = require('./Branch');
+const {schemaToTree} = require('./Branch');
 
 // const {schemaToTree} = require('./DataTree');
 
@@ -14,19 +14,19 @@ const ConfigSchema = {
     }
   }
 }
-const ConfigTree = [
-  {key: 'appName', type: 'string', title: 'App Name'},
-  {key: 'flags', type: 'object', title: 'Flags',
-    children: [
-      {key: 'payments', type: 'object', title: 'Payments',
-        children: [
-          {key: 'provider', title: 'provider', type: 'string',  enum: ['stripe', 'paypal', 'authorize.net']},
-          {key: 'enabled',  title: 'enabled',  type: 'boolean', default: true}
-        ]
-      }
-    ]
-  }
-]
+// const ConfigTree = [
+//   {key: 'appName', type: 'string', title: 'App Name'},
+//   {key: 'flags', type: 'object', title: 'Flags',
+//     children: [
+//       {key: 'payments', type: 'object', title: 'Payments',
+//         children: [
+//           {key: 'provider', title: 'provider', type: 'string',  enum: ['stripe', 'paypal', 'authorize.net']},
+//           {key: 'enabled',  title: 'enabled',  type: 'boolean', default: true}
+//         ]
+//       }
+//     ]
+//   }
+// ]
 
 
 test('transform schema into tree "Branch" array', t => {

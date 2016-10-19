@@ -1,8 +1,8 @@
 # Json Editor
 
-[![Build Status](https://travis-ci.org/justsml/json-editor.svg?branch=master)](https://travis-ci.org/justsml/json-editor)
-[![GitHub stars](https://img.shields.io/github/stars/justsml/json-editor.svg)](https://github.com/justsml/json-editor/stargazers)
-[![Github Releases](https://img.shields.io/github/downloads/justsml/json-editor/latest/total.svg?maxAge=1592000)]()
+[![Build Status](https://travis-ci.org/justsml/json-reactor.svg?branch=master)](https://travis-ci.org/justsml/json-reactor)
+[![GitHub stars](https://img.shields.io/github/stars/justsml/json-reactor.svg)](https://github.com/justsml/json-reactor/stargazers)
+[![Github Releases](https://img.shields.io/github/downloads/justsml/json-reactor/latest/total.svg?maxAge=1592000)]()
 
 > JSON Object Editor
 **Pure Javascript.**
@@ -49,7 +49,7 @@ const config = {
 };
 
 function init() {
-  editor = JsonEditor.create(document.querySelector('.results-view'), config)
+  editor = JsonReactor.create(document.querySelector('.results-view'), config)
 }
 
 ```

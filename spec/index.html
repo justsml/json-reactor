@@ -22,7 +22,7 @@
         </h2>
         <div class="btn-group">
           <div id='start' onclick="init()" class="btn btn-success">Init</div>
-          <div id='destroy' onclick="jsonEditor.destroy()" class="btn btn-danger">Destroy</div>
+          <div id='destroy' onclick="jsonReactor.destroy()" class="btn btn-danger">Destroy</div>
         </div>
       </div>
 
@@ -33,39 +33,34 @@
       </div>
 
       <div class="text-center">
-        <div class="results-view">
+        <div id="tree-root">
         </div>
       </div>
     </div>
-    <script src='../dist/json-editor.bundle.js?cache=not-now'></script>
+    <script src='../dist/json-reactor.js?cache=not-now'></script>
     <script>
-      var jsonEditor;
-      const config = {
-        selection: false,
-        sorting: true,
-        defaultSort: 'name',
-        columns: [
-          {selection: true, multiple: true, toggleAll: true, classes: ['text-center', 'tbl-xs-2']},
-          {title: 'Name',   render: 'name', cols: 4},
-          {title: 'Number', render: 'number'},
-          {title: 'Region', render: 'region'},
-          {title: 'Type', sort: 'type', render: ({row}) => row.type && row.type.toLowerCase() || 'N/A'},
-        ],
-        metadata: {
-          foo: 'bar',
-          bar: 'foo',
-          baz: 'zab',
-          sequence: [1, 2, 3, 4, 5],
-          abcs: 'abcdefg'.split('')
-        }
-      };
+      var jsonReactor;
+const treeRoot = document.querySelector('#tree-root');
+const config = [
+  {key: 'appName', type: 'string', title: 'App Name'},
+  {key: 'flags', type: 'object', title: 'Flags',
+    children: [
+      {key: 'payments', type: 'object', title: 'Payments',
+        children: [
+          {key: 'provider', title: 'provider', type: 'string',  enum: ['stripe', 'paypal', 'authorize.net']},
+          {key: 'enabled',  title: 'enabled',  type: 'boolean', default: true}
+        ]
+      }
+    ]
+  }
+];
       function init() {
         const jsonText    = document.querySelector('textarea.json-string')
         let jsonInput;
         try {
-          jsonInput = jsonText && jsonText.value && jsonText.value.length > 5 ? JSON.parse(jsonText.value) : ['"no data"'];
-          let schema = JsonEditor.schema(jsonInput);
-          jsonEditor  = JsonEditor.create(document.querySelector('.results-view'), schema)
+          jsonInput = jsonText && jsonText.value && jsonText.value.length > 5 ? JSON.parse(jsonText.value) : config;
+          //let schema = JsonReactor.Schema(jsonInput);
+          //jsonReactor  = JsonReactor.create(document.querySelector('.results-view'), schema)
           // ^^ convert to schema ^^
         } catch (e) {
           if (e instanceof SyntaxError) {
@@ -77,6 +72,7 @@
         }
 
         jsonText.value = JSON.stringify(jsonInput, null, 2)
+        window.treeRootRef = JsonReactor.mountTree(treeRoot, config);
       }
       setTimeout(init, 250)
     </script>

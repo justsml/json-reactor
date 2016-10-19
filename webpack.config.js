@@ -12,7 +12,7 @@ if (env === 'production') {
   suffix = '.min.js';
   plugins.push(new webpack.optimize.UglifyJsPlugin({
     mangle: {
-      except: ['JsonEditor', 'exports', 'require']
+      except: ['JsonReactor', 'exports', 'require']
     }
   }));
 }
@@ -22,8 +22,8 @@ module.exports = {
   entry: './index.js',
   output: {
     path: __dirname + '/dist',
-    filename: 'json-editor.bundle' + suffix,
-    library: 'JsonEditor',
+    filename: 'json-reactor' + suffix,
+    library: 'JsonReactor',
     umdNamedDefine: false,
     libraryTarget: 'umd',
   },
@@ -31,7 +31,7 @@ module.exports = {
     loaders: [
       // { test: /\.css$/, exclude: /\.useable\.css$/, loader: 'style!css' },
       // { test: /\.useable\.css$/, loader: 'style/useable!css' },
-      { test: require.resolve("./index.js"), loader: "expose?JsonEditor" },
+      { test: require.resolve("./index.js"), loader: "expose?JsonReactor" },
       { test: /\.less$/, loader: 'css!less' },
       {
         test: /\.js$/,

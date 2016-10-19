@@ -94,7 +94,7 @@ const schemaToTree = (schema) => {
     let fld  = schema[key];
     let type = isValidField(fld) ? fld.type : null;
     type = type === null && typeof fld === 'object' ? 'object' : 'null';
-    let children = typeof fld === 'object' && !['object', 'array'].includes(fld.type)
+    let children = typeof fld === 'object' && !['object'].includes(fld.type)
       ? schemaToTree(fld) : undefined;
     return Branch(Object.assign({key, children, type}, fld))
   })

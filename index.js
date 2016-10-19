@@ -3,12 +3,13 @@ import {FieldEditor}        from './src/editor/FieldEditor'
 import {KeyValueEditor}     from './src/editor/KeyValueEditor'
 import {Styles}             from './src/Util'
 import {Schema}             from './src/schema/Schema'
+import {DataTreeFactory, mountTree} from './src/tree/DataTree'
 
-export const schema = Schema;
+export {mountTree, DataTreeFactory, Schema};
 
 export function create(elem, config) {
-  if (!elem)   { throw new Error('JsonEditor instance requires 1st param `elem`') }
-  if (!config) { throw new Error('JsonEditor instance requires 2nd param `config`') }
+  if (!elem)   { throw new Error('JsonReactor instance requires 1st param `elem`') }
+  if (!config) { throw new Error('JsonReactor instance requires 2nd param `config`') }
 
   const destroy = () => {
     Styles.remove()
@@ -47,7 +48,7 @@ export function create(elem, config) {
   treeSection.appendChild(keyList)
   treeSection.classList.add('j-side')
   elem.appendChild(treeSection)
-  elem.classList.add('json-editor')
+  elem.classList.add('json-reactor')
 
   Styles.add()
 
