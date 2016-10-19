@@ -6,7 +6,7 @@
     <title>JSON Editor Widget</title>
     <meta name="robots" content="noindex">
     <link rel='stylesheet' href='./style.css?nocache'>
-    <link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
+    <!--<link rel='stylesheet' href='//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>-->
     <style type="text/css">
       /* initial css from parent app - setup to prevents FOUC while loading */
       .results-view { width: 720px; border: 1px solid #333; margin: 0 auto; }
@@ -21,8 +21,8 @@
           <div class="small">Pure JavaScript - Framework Agnostic</div>
         </h2>
         <div class="btn-group">
-          <div id='start' onclick="init()" class="btn btn-success">Init</div>
-          <div id='destroy' onclick="jsonReactor.destroy()" class="btn btn-danger">Destroy</div>
+          <button id='start' onclick="init()" class="btn btn-success">Init</button>
+          <button id='destroy' onclick="jsonReactor.destroy()" class="btn btn-danger">Destroy</button>
         </div>
       </div>
 
@@ -33,7 +33,7 @@
       </div>
 
       <div class="text-center">
-        <div id="tree-root">
+        <div id="app">
         </div>
       </div>
     </div>
@@ -44,10 +44,15 @@ const treeRoot = document.querySelector('#tree-root');
 const config = [
   {key: 'appName', type: 'string', title: 'App Name'},
   {key: 'flags', type: 'object', title: 'Flags',
+    expanded: true,
     children: [
       {key: 'payments', type: 'object', title: 'Payments',
+        expanded: true,
         children: [
-          {key: 'provider', title: 'provider', type: 'string',  enum: ['stripe', 'paypal', 'authorize.net']},
+          {key: 'provider', title: 'provider', type: 'string',
+            enum: ['stripe', 'paypal', 'authorize.net'],
+            subtitle: ['stripe', 'paypal', 'authorize.net'].join(', '),
+          },
           {key: 'enabled',  title: 'enabled',  type: 'boolean', default: true}
         ]
       }
@@ -72,7 +77,8 @@ const config = [
         }
 
         jsonText.value = JSON.stringify(jsonInput, null, 2)
-        window.treeRootRef = JsonReactor.mountTree(treeRoot, config);
+        window.treeRootRef = JsonReactor.loadTreeApp({data: config, draggable: false});
+        // window.treeRootRef = JsonReactor.mountTree(treeRoot, config);
       }
       setTimeout(init, 250)
     </script>

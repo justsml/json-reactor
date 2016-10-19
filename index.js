@@ -1,11 +1,24 @@
+import React                from 'react';
+import {render}             from 'react-dom';
+
+import {Styles}             from './src/Util'
+// Old:
 import {KeyList}            from './src/editor/KeyList'
 import {FieldEditor}        from './src/editor/FieldEditor'
 import {KeyValueEditor}     from './src/editor/KeyValueEditor'
-import {Styles}             from './src/Util'
-import {Schema}             from './src/schema/Schema'
+//New
 import {DataTreeFactory, mountTree} from './src/tree/DataTree'
+import {Tree}               from './src/tree'
+import {Schema}             from './src/schema/Schema'
 
-export {mountTree, DataTreeFactory, Schema};
+
+export {mountTree, Tree, DataTreeFactory, Schema};
+
+export const loadTreeApp = ({data, draggable}) => {
+  return render(
+    <Tree data={data} draggable={draggable} />,
+    document.getElementById('app'))
+}
 
 export function create(elem, config) {
   if (!elem)   { throw new Error('JsonReactor instance requires 1st param `elem`') }

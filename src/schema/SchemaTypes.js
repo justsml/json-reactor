@@ -19,6 +19,14 @@ export const TYPE_COMPLEXITY_ORDER  = [
   JS_ENUM_TYPE];
 export const JS_TYPES = TYPE_COMPLEXITY_ORDER;
 
+export const SIMPLE_TYPES = [
+  JS_BOOLEAN_TYPE,
+  JS_DATE_TYPE,
+  JS_ENUM_TYPE,
+  JS_NUMBER_TYPE,
+  JS_STRING_TYPE
+]
+
 // const patterns = {
 //   boolean: [/^(true|false)$/i, /^(yes|no)$/i, /^(Y|N)$/i, /^(1|0)$/i],
 //   number: [/^\$?[\.,\d]*$/]

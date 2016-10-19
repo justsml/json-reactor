@@ -1,4 +1,24 @@
 /* test/extra css rules go here */
+
+body {
+  background-color: #DEDEDE;
+  font-family: Helvetica, Tahoma, sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+div#app {
+  border: 4px dashed #999;
+  border-radius: 20px;
+  margin: 20px auto;
+  max-width: 800px;
+  width: 80%;
+  padding: 20px;
+}
+
+.small { font-size: 0.65em;}
+textarea.json-string {min-height: 145px;}
+
 div.json-reactor {
   display: flex;
   flex: 0 1 auto;

@@ -21,7 +21,7 @@ casper.test.begin('has created JsonReactor', 3, function (test) {
   //   this.die("Complete callback has failed: " + err);
   // });
 
-  casper.start('http://0.0.0.0:7331/tests/index.html', function () {
+  casper.start('http://0.0.0.0:7331/spec/index.html', function () {
     this.echo('Loaded')
   }).waitForText('Editor', function () {
     test.assertTextExists('Editor', 'page body contains "Editor"')
