@@ -42,10 +42,13 @@
       var jsonReactor;
 const treeRoot = document.querySelector('#tree-root');
 const config = [
-  {key: 'appName', type: 'string', title: 'App Name'},
+  {key: 'appName', type: 'string', title: 'App Name', subtitle: 'Site title'},
   {key: 'flags', type: 'object', title: 'Flags',
     expanded: true,
     children: [
+      {key: 'importCsv', type: 'boolean', title: 'Enable CSV Import?', subtitle: 'Custom file -> Order'},
+      {key: 'orderHistory', type: 'boolean', title: 'Enable Order History?'},
+      {key: 'discounts', type: 'boolean', title: 'Enable Discounts?'},
       {key: 'payments', type: 'object', title: 'Payments',
         expanded: true,
         children: [

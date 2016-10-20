@@ -46,6 +46,10 @@ section.j-side {
 
 }
 
+input[type] {
+  border: 1px solid #333;
+}
+
 textarea.json-string {
   width: 100%;
   font-family: 'Droid Mono', 'Courier', monospace;

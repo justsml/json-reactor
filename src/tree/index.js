@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import {JS_TYPES, SIMPLE_TYPES} from '../schema/SchemaTypes'
-import SortableTree, { toggleExpandedForAll } from 'react-sortable-tree';
+import SortableTree, { toggleExpandedForAll } from '../react-sortable-tree';
 import styles from './style.less';
 import './style.less';
+import {EditField} from './EditField'
 // import '../shared/favicon/apple-touch-icon.png';
 // import '../shared/favicon/favicon-16x16.png';
 // import '../shared/favicon/favicon-32x32.png';
@@ -16,6 +17,8 @@ export class Tree extends Component {
     this.expandAll      = this.expandAll.bind(this);
     this.collapseAll    = this.collapseAll.bind(this);
     this.applySchema    = this.applySchema.bind(this);
+    this.onChange       = this.onChange.bind(this);
+    this.saveChanges    = this.saveChanges.bind(this);
 
     // const renderDepthTitle = ({ path }) => `Depth: ${path.length}`;
 
@@ -130,35 +133,36 @@ export class Tree extends Component {
 */
   }
 
-  applySchema(treeData) {
-    const isEditableType     = fld => (fld.key || fld.title) && JS_TYPES.some(t => fld.type === t.type)
-    // const isSubtitleTemplate = fld => typeof fld.subtitle === 'function'
-    const isTitleString      = fld => typeof fld.type === 'string'
-    const getChildren        = fld => fld && fld.children && fld.children.length >= 1 ? fld.children : false;
-    const getEditor          = fld => ({path, node, treeIndex}) => {
-      console.warn('applySchema.getEditor', fld, path, node, treeIndex);
-      if (SIMPLE_TYPES.includes(node.type)) {
-        return (
-          <div key={fld.key}>
-            <label>{typeof fld.title === 'string' ? fld.title : fld.key}
-              <input type='text' value={fld.value} placeholder={fld.title || ''} onChange={e => console.warn('ValChanged', 'e', e, 'fld', fld, 'path', path, 'node', node, 'treeIndex', treeIndex)} />
-            </label>
-          </div>
-        )
-      } else {
-        return (<div className='not-editable'>{fld.value}</div>)
-      }
-    }
+  saveChanges(e) {
+    const {nativeEvent, target, type} = e;
+    console.warn('Tree.saveChanges', type, '\nthis', this, '\nnativeEvent', nativeEvent, '\ntarget', target);
 
-    const fixTreeLevel = (treeData) => {
+  }
+
+  onChange(e) {
+    const {nativeEvent, target, type} = e;
+    console.warn('Tree.onChange', type, '\nthis', this, '\nnativeEvent', nativeEvent, '\ntarget', target);
+  }
+
+  applySchema(treeData) {
+    // const isEditableType     = fld => (fld.key || fld.title) && JS_TYPES.some(t => fld.type === t.type)
+    // const isSubtitleTemplate = fld => typeof fld.subtitle === 'function'
+    // const isTitleString      = fld => typeof fld.type === 'string'
+    const getChildren        = fld => fld && fld.children && fld.children.length >= 1 ? fld.children : false;
+
+    const fixTreeLevel = (treeData, path = []) => {
       console.warn('fixTreeLevel', treeData);
-      return treeData.map(fld => {
-        let c = getChildren(fld);
-        // if (isEditableType(fld)) {
-        fld.subtitle = getEditor(fld)
-        // }
+      return treeData.map((fld, idx) => {
+        const c = getChildren(fld)
+        const currPath = [].slice.call(path)
+        currPath.push(idx);
+        fld.path = currPath;// fld.path || currPath;
+        fld.subtitle = EditField(Object.assign({onChange: this.onChange}, fld))
+        console.warn('fixTreeLevel.subtitle', currPath, 'TreeLevel.children', c)
         if (c) {
-          fld.children = fixTreeLevel(c);
+          const p = [].slice.call(path)
+          p.push(idx);
+          fld.children = fixTreeLevel(c, p);
         }
         return fld;
       });
@@ -202,7 +206,7 @@ export class Tree extends Component {
       node,
       path,
       treeIndex,
-      lowerSiblingCounts: _lowerSiblingCounts,
+      // lowerSiblingCounts: _lowerSiblingCounts,
     }) => {
       const objectString = Object.keys(node)
         .map(k => (k === 'children' ? 'children: Array' : `${k}: '${node[k]}'`))
@@ -231,7 +235,7 @@ export class Tree extends Component {
     return (
       <div className='jsonReactor jrTree'>
         <section className={styles['main-content']}>
-          <div style={{ height: 450 }}>
+          <div style={{ height: 550 }}>
             <button onClick={this.expandAll}>Expand All</button>
             <button onClick={this.collapseAll}>Collapse All</button>
 
@@ -278,6 +282,9 @@ export class Tree extends Component {
                   <button
                     style={{verticalAlign: 'middle'}}
                     onClick={() => alertNodeInfo(rowInfo)}>ℹ</button>,
+                  <button
+                    style={{verticalAlign: 'middle'}}
+                    onClick={this.saveChanges}>✔︎</button>,
                 ],
               })}
               />
@@ -286,4 +293,9 @@ export class Tree extends Component {
       </div>
     );
   }
+}
+
+Tree.propTypes = {
+  data:       PropTypes.array.isRequired,
+  draggable:  PropTypes.bool,
 }
