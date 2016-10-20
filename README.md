@@ -9,7 +9,7 @@ Edit any JSON object - schema-bound or free-form!!!
 
 > A JSON Object Editor
 **Pure Javascript.**
-*You know, that uncut sh*t.*
+*You know, that uncut sh\*t.*
 
 #### Powered by ReactJS
 
