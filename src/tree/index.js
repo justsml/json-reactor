@@ -1,9 +1,9 @@
 // import {JS_TYPES, SIMPLE_TYPES} from '../schema/SchemaTypes'
 import React, { Component, PropTypes } from 'react';
-import SortableTree, { toggleExpandedForAll } from '../react-sortable-tree';
+import SortableTree, { toggleExpandedForAll } from 'react-sortable-tree';
 import styles from './style.less';
 import './style.less';
-import {EditField, getArrayIndex3D} from './EditField'
+import {EditField, getArrayIndex3D, getTreeValue} from './EditField'
 // import '../shared/favicon/apple-touch-icon.png';
 // import '../shared/favicon/favicon-16x16.png';
 // import '../shared/favicon/favicon-32x32.png';
@@ -143,8 +143,12 @@ export class Tree extends Component {
     const {nativeEvent, target, path, value} = e;
     const {treeData} = this.state;
     let fld = getArrayIndex3D(treeData, path);
-    console.warn('onChange.fld:', fld, '\ntreeData:', treeData);
     fld.value = value;
+    console.warn('onChange.JSON:', treeData);
+    const jsonText = document.querySelector('textarea.json-string')
+    if (jsonText) {
+      jsonText.value = JSON.stringify(getTreeValue(treeData), null, 2)
+    }
     this.setState({treeData});
   }
 
@@ -239,7 +243,7 @@ export class Tree extends Component {
     return (
       <div className='jsonReactor jrTree'>
         <section className={styles['main-content']}>
-          <div style={{ height: 550 }}>
+          <div style={{ height: 650 }}>
             <button onClick={this.expandAll}>Expand All</button>
             <button onClick={this.collapseAll}>Collapse All</button>
 

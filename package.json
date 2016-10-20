@@ -58,6 +58,7 @@
     "webpack": "1.13.0"
   },
   "dependencies": {
+    "json-stringify-safe": "^5.0.1",
     "junk-parser": "1.0.0",
     "react": "15.3.2",
     "react-addons-shallow-compare": "15.3.2",

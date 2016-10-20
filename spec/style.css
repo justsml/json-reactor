@@ -1,12 +1,22 @@
 /* test/extra css rules go here */
 
 body {
-  background-color: #DEDEDE;
+  background-color: rgba(240,240,240,0.975);
   font-family: Helvetica, Tahoma, sans-serif;
   padding: 0;
   margin: 0;
 }
 
+input[type] {
+  width: 80%;
+}
+
+select {
+  width: 85%;
+}
+#find-box {
+  width: 120px;
+}
 div#app {
   border: 4px dashed #999;
   border-radius: 20px;

@@ -11,7 +11,7 @@ EditField.propTypes = {
 };
 
 /**
- * getFieldByPath finds a value by index.
+ * getArrayIndex3D finds a value by index.
  * Supports nested arrays via array of array indcies
  */
 export const getArrayIndex3D = (treeData, path) => {
@@ -25,6 +25,20 @@ export const getArrayIndex3D = (treeData, path) => {
     return data[0];
     // return data[0] && data[0].children ? data[0].children : data[0];
   }, treeData);
+}
+
+/**
+ * getTreeValue
+ * Extracts the `value` keys out to render the final JSON result
+ */
+export const getTreeValue = (arr, mode = 'object') => {
+  arr = Array.isArray(arr) ? arr : arr ? Array.from(arr) : null;
+  return arr && arr.reduce((tree, fld, i) => {
+    if (!fld) { throw new Error('Invalid field: ' + i + '\n array: ' + JSON.stringify(arr)); }
+    tree[fld.key] = fld.value ? fld.value :
+      fld.children && fld.children.length >= 1 ? getTreeValue(fld.children) : null;
+    return tree;
+  }, mode === 'object' ? {} : []);
 }
 
 export function EditField({ key, title, type, value, onChange, path }) {

@@ -8,15 +8,18 @@
 **Pure Javascript.**
 *That uncut sh*t.*
 
-## Vitals
+## Preview
 
+![image](https://cloud.githubusercontent.com/assets/397632/19552223/2e0ff820-966c-11e6-91e4-73028c95ab07.png)
 
-**Size** (gzipped/minified): **100Kb**/200Kb
+**Size** (gzipped+minified): **~100-150kB** (plus ReactJS v15+ ~40kB)
+
 **Full Lib w/ Schema and UI bits**
 
 ## Summary
 
 Edit JSON using a friendly Web GUI!
+
 Freeform or schema-bound modes.
 
 ## Commands
@@ -29,9 +32,10 @@ npm run build
 
 ### Example
 
-#### See `spec/index.html`
+## See `spec/index.html`
 
-Short example:
+
+Demo/example:
 
 ```js
 const config = {
