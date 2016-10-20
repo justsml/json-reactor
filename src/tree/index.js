@@ -3,7 +3,7 @@ import {JS_TYPES, SIMPLE_TYPES} from '../schema/SchemaTypes'
 import SortableTree, { toggleExpandedForAll } from '../react-sortable-tree';
 import styles from './style.less';
 import './style.less';
-import {EditField} from './EditField'
+import {EditField, getArrayIndex3D} from './EditField'
 // import '../shared/favicon/apple-touch-icon.png';
 // import '../shared/favicon/favicon-16x16.png';
 // import '../shared/favicon/favicon-32x32.png';
@@ -140,8 +140,12 @@ export class Tree extends Component {
   }
 
   onChange(e) {
-    const {nativeEvent, target, type} = e;
-    console.warn('Tree.onChange', type, '\nthis', this, '\nnativeEvent', nativeEvent, '\ntarget', target);
+    const {nativeEvent, target, path, value} = e;
+    const {treeData} = this.state;
+    let fld = getArrayIndex3D(treeData, path);
+    console.warn('onChange.fld:', fld, '\ntreeData:', treeData);
+    fld.value = value;
+    this.setState({treeData});
   }
 
   applySchema(treeData) {

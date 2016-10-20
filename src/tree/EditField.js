@@ -1,29 +1,29 @@
 import React, {PropTypes} from 'react';
 
 EditField.propTypes = {
-  title: PropTypes.string.isRequired,
   key: PropTypes.string.isRequired,
-  value: PropTypes.object,
-  type: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
   node: PropTypes.object,
+  onChange: PropTypes.func.isRequired,
   path: PropTypes.array.isRequired,
+  title: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  value: PropTypes.object,
 };
 
 /**
  * getFieldByPath finds a value by index.
  * Supports nested arrays via array of array indcies
  */
-export const getFieldByPath = (treeData, path) => {
+export const getArrayIndex3D = (treeData, path) => {
   const originalPath = [].slice.call(path);
-  return path.reduce((data, index) => {
-    if (!data) { throw new Error('Failed to get array index: ' + index + '\n originalPath: ' + JSON.stringify(originalPath)); }
-    // let i = index.shift();
-    let i = index;
+  return path.reduce((data, i) => {
+    if (!data) { throw new Error('Failed to get array index: ' + i + '\n originalPath: ' + JSON.stringify(originalPath)); }
+    data = Array.isArray(data) ? data : data && data.children ? data.children : data;
     if (i && i < data.length) {
       return data[i];
     }
     return data[0];
+    // return data[0] && data[0].children ? data[0].children : data[0];
   }, treeData);
 }
 

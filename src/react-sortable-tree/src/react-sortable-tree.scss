@@ -1,0 +1,23 @@
+/**
+  * The container holding the VirtualScroll
+  */
+.tree {
+    /*! This comment keeps Sass from deleting the empty rule */
+}
+
+/**
+ * Extra class applied to VirtualScroll through className prop
+ */
+.virtualScrollOverride {
+    * {
+        box-sizing: border-box;
+    }
+}
+
+:global .ReactVirtualized__Grid__innerScrollContainer {
+    overflow: visible;
+}
+
+:global .ReactVirtualized__Grid {
+    outline: none;
+}
