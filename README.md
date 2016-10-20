@@ -1,4 +1,6 @@
-# Json Editor
+# Json Reactor
+
+Edit any JSON object - schema-bound or free-form!!!
 
 [![Build Status](https://travis-ci.org/justsml/json-reactor.svg?branch=master)](https://travis-ci.org/justsml/json-reactor)
 [![GitHub stars](https://img.shields.io/github/stars/justsml/json-reactor.svg)](https://github.com/justsml/json-reactor/stargazers)
@@ -20,14 +22,12 @@
 
 Edit JSON using a friendly Web GUI!
 
-Freeform or schema-bound modes.
-
 ## Commands
 
 ```sh
 npm install
 npm run build
-
+npm start
 ```
 
 ### Example
