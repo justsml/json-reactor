@@ -45,7 +45,11 @@ export function EditField({ key, title, type, value, onChange, path }) {
     value = target ? target.value : null;
     onChange({path, key, value});
   }
-  if (type === 'string') {
+  if (type === 'string' && fld.enum) {
+    el = <select onChange={_onChange} title={title} className='field-value' name={key} value={value}>
+      {fld.enum.map(opt => <option value={opt} key={opt}>{opt}</option>)}
+    </select>
+  } else if (type === 'string') {
     el = <input type='text' onChange={_onChange} placeholder={title} title={title} className='field-value' name={key} value={value} />
   } else if (type === 'number') {
     el = <input type='number' onChange={_onChange} placeholder={title} title={title} className='field-value' name={key} value={value} />
@@ -54,7 +58,7 @@ export function EditField({ key, title, type, value, onChange, path }) {
   } else if (isEditableJson()) {
     el = <textarea onChange={_onChange} placeholder={title} title={title} className='field-value json-value' rows='7' value={JSON.stringify(value, null, 2)}></textarea>
   } else if (fld.children && fld.children.length >= 0) {
-    return (<label># {fld.children.length}</label>)
+    return (<label># of keys: {fld.children.length}</label>)
   } else {
     return <em>{key}: {type} - unknown state</em>
   }

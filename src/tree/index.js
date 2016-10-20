@@ -1,5 +1,5 @@
+// import {JS_TYPES, SIMPLE_TYPES} from '../schema/SchemaTypes'
 import React, { Component, PropTypes } from 'react';
-import {JS_TYPES, SIMPLE_TYPES} from '../schema/SchemaTypes'
 import SortableTree, { toggleExpandedForAll } from '../react-sortable-tree';
 import styles from './style.less';
 import './style.less';

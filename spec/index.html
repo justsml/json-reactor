@@ -42,11 +42,12 @@
       var jsonReactor;
 const treeRoot = document.querySelector('#tree-root');
 const config = [
-  {key: 'appName', type: 'string', title: 'App Name', subtitle: 'Site title'},
+  {key: 'appName', type: 'string', title: 'App Name', subtitle: 'Title: '},
   {key: 'flags', type: 'object', title: 'Flags',
     expanded: true,
     children: [
-      {key: 'importCsv', type: 'boolean', title: 'Enable CSV Import?', subtitle: 'Custom file -> Order'},
+      {key: 'productBrowserTag', type: 'string', title: 'Product Browser Tag', subtitle: 'Tag:'},
+      {key: 'importCsv', type: 'boolean', title: 'Enable CSV Import?'},
       {key: 'orderHistory', type: 'boolean', title: 'Enable Order History?'},
       {key: 'discounts', type: 'boolean', title: 'Enable Discounts?'},
       {key: 'payments', type: 'object', title: 'Payments',
@@ -54,7 +55,6 @@ const config = [
         children: [
           {key: 'provider', title: 'provider', type: 'string',
             enum: ['stripe', 'paypal', 'authorize.net'],
-            subtitle: ['stripe', 'paypal', 'authorize.net'].join(', '),
           },
           {key: 'enabled',  title: 'enabled',  type: 'boolean', default: true}
         ]
