@@ -4,11 +4,15 @@ Edit any JSON object - schema-bound or free-form!!!
 
 [![Build Status](https://travis-ci.org/justsml/json-reactor.svg?branch=master)](https://travis-ci.org/justsml/json-reactor)
 [![GitHub stars](https://img.shields.io/github/stars/justsml/json-reactor.svg)](https://github.com/justsml/json-reactor/stargazers)
-[![Github Releases](https://img.shields.io/github/downloads/justsml/json-reactor/latest/total.svg?maxAge=1592000)]()
+[![npm](https://img.shields.io/npm/dt/json-reactor.svg?maxAge=1592000)](https://www.npmjs.com/package/json-reactor)
+[![npm](https://img.shields.io/npm/v/json-reactor.svg?maxAge=1592000)](https://www.npmjs.com/package/json-reactor)
 
-> JSON Object Editor
+> A JSON Object Editor
 **Pure Javascript.**
-*That uncut sh*t.*
+*You know, that uncut sh*t.*
+
+#### Powered by ReactJS
+
 
 ## Preview
 
