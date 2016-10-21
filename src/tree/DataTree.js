@@ -7,7 +7,7 @@ import './style.less';
 export const mountTree = (root, data) => {
   const DataTree = DataTreeFactory({});
   const tree = <DataTree data={data} />;
-  console.warn('Mounting tree', tree, '\nroot', root);
+  // console.warn('Mounting tree', tree, '\nroot', root);
   return render(tree, root);
 }
 

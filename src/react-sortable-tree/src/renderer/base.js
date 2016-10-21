@@ -4,16 +4,16 @@ import baseStyles from './base.less';
 import { isDescendant } from './utils/tree-data-utils';
 
 let styles = baseStyles;
-// Add extra classes in browsers that don't support flex
-if (getIEVersion < 10) {
-    styles = {
-        ...baseStyles,
-        row:         `${styles.row} ${styles.row_NoFlex}`,
-        rowContents: `${styles.rowContents} ${styles.rowContents_NoFlex}`,
-        rowLabel:    `${styles.rowLabel} ${styles.rowLabel_NoFlex}`,
-        rowToolbar:  `${styles.rowToolbar} ${styles.rowToolbar_NoFlex}`,
-    };
-}
+// // Add extra classes in browsers that don't support flex
+// if (getIEVersion < 10) {
+//     styles = {
+//         ...baseStyles,
+//         row:         `${styles.row} ${styles.row_NoFlex}`,
+//         rowContents: `${styles.rowContents} ${styles.rowContents_NoFlex}`,
+//         rowLabel:    `${styles.rowLabel} ${styles.rowLabel_NoFlex}`,
+//         rowToolbar:  `${styles.rowToolbar} ${styles.rowToolbar_NoFlex}`,
+//     };
+// }
 
 const NodeRendererDefault = ({
     canDrag,

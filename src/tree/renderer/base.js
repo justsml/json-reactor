@@ -1,19 +1,8 @@
 import React, { PropTypes } from 'react';
-import { getIEVersion } from 'react-sortable-tree/utils/browser-utils';
-import baseStyles from './base.scss';
-import { isDescendant } from 'react-sortable-tree/utils/tree-data-utils';
+import baseStyles           from './base.scss';
+import { isDescendant }     from '../../react-sortable-tree/src/utils/tree-data-utils';
 
 let styles = baseStyles;
-// Add extra classes in browsers that don't support flex
-if (getIEVersion < 10) {
-    styles = {
-        ...baseStyles,
-        row:         `${styles.row} ${styles.row_NoFlex}`,
-        rowContents: `${styles.rowContents} ${styles.rowContents_NoFlex}`,
-        rowLabel:    `${styles.rowLabel} ${styles.rowLabel_NoFlex}`,
-        rowToolbar:  `${styles.rowToolbar} ${styles.rowToolbar_NoFlex}`,
-    };
-}
 
 const BaseRenderer = ({
     canDrag,

@@ -31,7 +31,7 @@ const ConfigSchema = {
 
 test('transform schema into tree "Branch" array', t => {
   const treeData = schemaToTree(ConfigSchema)
-  console.warn('treeData', JSON.stringify(treeData, null, 2));
+  // console.warn('treeData', JSON.stringify(treeData, null, 2));
   t.equals(treeData.length, 2)
   t.equals(treeData[0].metadata.key, 'appName')
   t.equals(treeData[1].metadata.key, 'flags')
