@@ -4,6 +4,7 @@ import SortableTree, { toggleExpandedForAll } from 'react-sortable-tree';
 import styles from './style.less';
 import './style.less';
 import {EditField, getArrayIndex3D, getTreeValue} from './EditField'
+import {BaseRenderer} from './renderer/base';
 // import '../shared/favicon/apple-touch-icon.png';
 // import '../shared/favicon/favicon-16x16.png';
 // import '../shared/favicon/favicon-32x32.png';
@@ -165,7 +166,7 @@ export class Tree extends Component {
         const currPath = [].slice.call(path)
         currPath.push(idx);
         fld.path = currPath;// fld.path || currPath;
-        fld.subtitle = EditField(Object.assign({onChange: this.onChange}, fld))
+        fld.subtitle = typeof fld.subtitle !== 'object' ? EditField(Object.assign({onChange: this.onChange}, fld)) : fld.subtitle;
         console.warn('fixTreeLevel.subtitle', currPath, 'TreeLevel.children', c)
         if (c) {
           const p = [].slice.call(path)
@@ -259,12 +260,12 @@ export class Tree extends Component {
                   />
               </label>
 
-              <button
+              <button className="navLeft"
                 type="button"
                 disabled={!searchFoundCount}
                 onClick={selectPrevMatch}>&lt;</button>
 
-              <button
+              <button className="navRight"
                 type="submit"
                 disabled={!searchFoundCount}
                 onClick={selectNextMatch}>&gt;</button>
@@ -275,6 +276,7 @@ export class Tree extends Component {
 
             <SortableTree
               treeData={treeData}
+              nodeContentRenderer={BaseRenderer}
               onChange={this.updateTreeData}
               maxDepth={5}
               searchQuery={searchString}

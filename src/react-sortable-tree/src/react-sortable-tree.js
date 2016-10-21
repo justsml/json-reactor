@@ -9,7 +9,7 @@ import { AutoSizer, List } from 'react-virtualized';
 import isEqual from 'lodash.isequal';
 import 'react-virtualized/styles.css';
 import TreeNode from './tree-node';
-import NodeRendererDefault from './node-renderer-default';
+import NodeRendererDefault from './renderer/base';
 import {
     walk,
     getFlatDataFromTree,
@@ -394,6 +394,9 @@ class ReactSortableTree extends Component {
                 dragHover={this.dragHover}
             >
                 <NodeContentRenderer
+                    canDrag={canDrag}
+                    rowFactory={rowFactory}
+                    buttonFactory={buttonFactory}
                     node={node}
                     path={path}
                     isSearchMatch={isSearchMatch}

@@ -146,6 +146,7 @@ TreeNode.propTypes = {
     children:  PropTypes.node,
 
     // Drop target
+    canDrag:           PropTypes.bool,
     connectDropTarget: PropTypes.func.isRequired,
     isOver:            PropTypes.bool.isRequired,
     canDrop:           PropTypes.bool.isRequired,
