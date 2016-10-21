@@ -15,9 +15,6 @@
       "react"
     ]
   },
-  "engines": {
-    "node": ">=6.1.0"
-  },
   "description": "A JSON Object Editor Component. Pure JavaScript, NO jQuery. Built w/ WebPack. Wrappers For React, Angular, Dojo coming soon!",
   "main": "index.js",
   "scripts": {
@@ -58,11 +55,18 @@
     "webpack": "1.13.0"
   },
   "dependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "eslint-plugin-react": "^6.1.2",
+    "file-loader": "^0.9.0",
     "json-stringify-safe": "^5.0.1",
-    "junk-parser": "1.0.0",
+    "node-sass": "^3.10.1",
+    "postcss-loader": "^0.9.1",
     "react": "15.3.2",
     "react-addons-shallow-compare": "15.3.2",
     "react-dom": "15.3.2",
-    "react-sortable-tree": "0.1.2"
+    "react-sortable-tree": "0.1.2",
+    "sass-loader": "^4.0.2",
+    "style-loader": "^0.13.1"
   }
 }

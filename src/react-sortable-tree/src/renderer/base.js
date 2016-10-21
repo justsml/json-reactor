@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { getIEVersion } from './utils/browser-utils';
-import baseStyles from './base.scss';
+import baseStyles from './base.less';
 import { isDescendant } from './utils/tree-data-utils';
 
 let styles = baseStyles;
