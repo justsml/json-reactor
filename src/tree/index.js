@@ -1,10 +1,10 @@
 // import {JS_TYPES, SIMPLE_TYPES} from '../schema/SchemaTypes'
 import React, { Component, PropTypes } from 'react';
 import SortableTree, { toggleExpandedForAll } from 'react-sortable-tree';
-import styles from './style.less';
 import './style.less';
+import styles from './style.less';
 import {EditField, getArrayIndex3D, getTreeValue} from './EditField'
-import {BaseRenderer} from './renderer/base';
+import {FieldRenderer} from './renderer/FieldRenderer';
 // import '../shared/favicon/apple-touch-icon.png';
 // import '../shared/favicon/favicon-16x16.png';
 // import '../shared/favicon/favicon-32x32.png';
@@ -28,110 +28,14 @@ export class Tree extends Component {
       searchFocusIndex: 0,
       searchFoundCount: null,
       draggable:        props.draggable || false,
-      treeData:         this.applySchema(props.data),
+      treeData:         props.data,
     };
-/*
-[{
-  title: '`title`',
-  subtitle: '`subtitle`',
-  expanded: true,
-  children: [
-    {
-      title: 'Child Node',
-      subtitle: 'Defined in `children` array belonging to parent',
-    },
-    {
-      title: 'Nested structure is rendered virtually',
-      subtitle: (
-        <span>
-          The tree uses&nbsp;
-            react-virtualized
-          &nbsp;and the relationship lines are more of a visual trick.
-        </span>
-      ),
-    },
-  ],
-},
-{
-  expanded: true,
-  title: 'Any node can be the parent or child of any other node',
-  children: [
-    {
-      expanded: true,
-      title: 'Chicken',
-      children: [
-        { title: 'Egg' },
-      ],
-    },
-  ],
-},
-{
-  title: 'Button(s) can be added to the node',
-  subtitle: 'Node info is passed when generating so you can use it in your onClick handler',
-},
-{
-  title: 'Show node children by setting `expanded`',
-  subtitle: ({ node }) => `expanded: ${node.expanded ? 'true' : 'false'}`,
-  children: [
-    {
-      title: 'Bruce',
-      subtitle: ({ node }) => `expanded: ${node.expanded ? 'true' : 'false'}`,
-      children: [
-        { title: 'Bruce Jr.' },
-        { title: 'Brucette' },
-      ],
-    },
-  ],
-},
-{
-  title: 'Advanced',
-  subtitle: 'Settings, behavior, etc.',
-  children: [
-    {
-      title: (
-        <div>
-          <div
-            style={{
-              backgroundColor: 'gray',
-              display: 'inline-block',
-              borderRadius: 10,
-              color: '#FFF',
-              padding: '0 5px',
-            }}>Any Component</div>
-          &nbsp;can be used for `title`
-        </div>
-      ),
-    },
-    {
-      expanded: true,
-      title: 'Limit nesting with `maxDepth`',
-      subtitle: 'It\'s set to 5 for this example',
-      children: [
-        {
-          expanded: true,
-          title: renderDepthTitle,
-          children: [
-            {
-              expanded: true,
-              title: renderDepthTitle,
-              children: [
-                { title: renderDepthTitle },
-                {
-                  title: 'This cannot be dragged deeper',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: 'When node contents are really long, it will cause a horizontal scrollbar' +
-      ' to appear. Deeply nested elements will also trigger the scrollbar.',
-    },
-  ],
-}]
-*/
+  }
+
+  componentWillMount() {
+    let {treeData} = this.state;
+    treeData = this.applySchema(treeData);
+    this.setState({treeData});
   }
 
   saveChanges(e) {
@@ -141,12 +45,12 @@ export class Tree extends Component {
   }
 
   onChange(e) {
-    const {nativeEvent, target, path, value} = e;
+    const {nativeEvent, target, node, path, value, key} = e;
     const {treeData} = this.state;
     let fld = getArrayIndex3D(treeData, path);
     fld.value = value;
-    console.warn('onChange.JSON:', treeData);
-    const jsonText = document.querySelector('textarea.json-string')
+    console.warn('onChange.JSON:', e);
+    const jsonText = document.querySelector('textarea.json-result')
     if (jsonText) {
       jsonText.value = JSON.stringify(getTreeValue(treeData), null, 2)
     }
@@ -166,7 +70,8 @@ export class Tree extends Component {
         const currPath = [].slice.call(path)
         currPath.push(idx);
         fld.path = currPath;// fld.path || currPath;
-        fld.subtitle = typeof fld.subtitle !== 'object' ? EditField(Object.assign({onChange: this.onChange}, fld)) : fld.subtitle;
+        fld.subtitle = EditField(Object.assign({onChange: this.onChange}, fld));
+        // || fld.subtitle || <span></span>;
         console.warn('fixTreeLevel.subtitle', currPath, 'TreeLevel.children', c)
         if (c) {
           const p = [].slice.call(path)
@@ -276,8 +181,8 @@ export class Tree extends Component {
 
             <SortableTree
               treeData={treeData}
-              nodeContentRenderer={BaseRenderer}
-              onChange={this.updateTreeData}
+              nodeContentRenderer={FieldRenderer}
+              onChange={this.onChange}
               maxDepth={5}
               searchQuery={searchString}
               searchFocusOffset={searchFocusIndex}
@@ -291,7 +196,7 @@ export class Tree extends Component {
                 buttons: [
                   <button
                     style={{verticalAlign: 'middle'}}
-                    onClick={() => alertNodeInfo(rowInfo)}>ℹ</button>,
+                    onClick={() => rowInfo.node.value = undefined}>✖︎</button>,
                   <button
                     style={{verticalAlign: 'middle'}}
                     onClick={this.saveChanges}>✔︎</button>,

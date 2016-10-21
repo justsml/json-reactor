@@ -35,8 +35,14 @@ export const getTreeValue = (arr, mode = 'object') => {
   arr = Array.isArray(arr) ? arr : arr ? Array.from(arr) : null;
   return arr && arr.reduce((tree, fld, i) => {
     if (!fld) { throw new Error('Invalid field: ' + i + '\n array: ' + JSON.stringify(arr)); }
-    tree[fld.key] = fld.value ? fld.value :
-      fld.children && fld.children.length >= 1 ? getTreeValue(fld.children) : null;
+    const currTypeMode = ['object', 'array'].includes(fld.type) ? fld.type : undefined;
+    const v = fld.value ? fld.value :
+      fld.children && fld.children.length >= 1 ? getTreeValue(fld.children, currTypeMode) : null;
+    if (tree && tree.push) {
+      tree.push(v);
+    } else {
+      tree[fld.key] = v;
+    }
     return tree;
   }, mode === 'object' ? {} : []);
 }
@@ -78,7 +84,7 @@ export function EditField({ key, title, type, value, onChange, path }) {
   }
   // el.path = path;
   return (<label>
-    <span>{fld.subtitle}</span>
+    <span>{fld.label || ''}</span>
     &#160;
     {el}
   </label>)
