@@ -7,10 +7,37 @@ const limits = {
   enableEnumMinRows: 50, // min size of src rows b4 enums are detected
   enumSize: 8,
   enumStringSize: 32,
-  minFieldTypeCount: 50,
+  minFieldTypeCount: 10,
+}
+
+/**
+ * buildSimpleSchema accepts 1 JSON object of any shape,
+ * and tries to naively guess the type structure
+ *
+ * @export
+ * @param {any} data
+ */
+export function buildSimpleSchema(data) {
+  if (!data) {throw new TypeError('buildSimpleSchema requires 1 arg type object')}
+  let seq = (Array.isArray(data) ? data : typeof data === 'object' ? Object.keys(data) : null)
+  if (!seq || typeof seq.map !== 'function') {
+    console.warn('unexpected key/array passed to buildSimpleSchema', seq, data, '\n\n###arguments', arguments);
+    return data;
+  }
+  return data.map((key, idx) => {
+    let val = data[key];
+    let typ = Array.isArray(val) ? 'array' : typeof val;
+    if (val === null || ['array', 'string', 'number', 'undefined'].includes(typ)) {
+      val = guessType(val); // basic type
+    } else {// if (['array'].includes(typ)) {
+      val = buildSimpleSchema(val);
+    }
+    return val;
+  });
 }
 
 export function buildSchema(data) {
+  if (!Array.isArray(data)) {throw new TypeError('buildSchema requires 1 array arg')}
   const schemaLevels = data.reduce(_evaluateSchemaLevel);
   const enumFields   = _findEnumTypes(schemaLevels);
   const schema       = _filterTypesByProbability(schemaLevels);

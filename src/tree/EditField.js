@@ -7,6 +7,7 @@ EditField.propTypes = {
   path: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
+  subtype: PropTypes.string,
   value: PropTypes.object,
 };
 
@@ -14,7 +15,7 @@ EditField.propTypes = {
  * getArrayIndex3D finds a value by index.
  * Supports nested arrays via array of array indcies
  */
-export const getArrayIndex3D = (treeData, path) => {
+export const getArrayIndex3D = (treeData, path = []) => {
   const originalPath = [].slice.call(path);
   return path.reduce((data, i) => {
     if (!data) { throw new Error('Failed to get array index: ' + i + '\n originalPath: ' + JSON.stringify(originalPath)); }
@@ -47,7 +48,8 @@ export const getTreeValue = (arr, mode = 'object') => {
   }, mode === 'object' ? {} : []);
 }
 
-export function EditField({ key, title, type, value, onChange, path }) {
+export function EditField({ key, title, type, subtype, value, onChange, path, inputState }) {
+  // const {addingType, deleteConfirm} = inputState;
   let el;
   const fld = arguments[0];
   const isEditableJson = () => !fld.children && ['array', 'object'].includes(type)
@@ -56,6 +58,8 @@ export function EditField({ key, title, type, value, onChange, path }) {
   // const basicTypes = ['string', 'number', 'boolean']
   // const getTypeName = (x) => Array.isArray(x) ? 'array' : typeof x
   // console.error('EditField Failed ', 'type=', type, 'node=', node);
+  const isNothing = x => typeof x === 'undefined' || x === null;
+  const isCsvType = () => type === 'array' && (!subtype || ['string', 'number'].includes(subtype))
   const _onChange = e => {
     var {target, nativeEvent} = e;
     var value;
@@ -63,18 +67,28 @@ export function EditField({ key, title, type, value, onChange, path }) {
       target = nativeEvent.target;
     }
     value = target ? target.value : null;
-    onChange({path, key, value});
+    if (isCsvType()) {
+      //  minLength={fld.min ? fld.min : -Infinity} maxLength={fld.max ? fld.max : Infinity}
+      value = value ? value.trim().split(/\r?\n/) : [];
+    }
+    onChange({path, key, value, fld});
   }
   if (type === 'string' && fld.enum) {
     el = <select onChange={_onChange} title={title} className='field-value' name={key} value={value}>
       {fld.enum.map(opt => <option value={opt} key={opt}>{opt}</option>)}
     </select>
+  } else if (isCsvType()) {
+    el = <div className='csv-field'>
+      <textarea onChange={_onChange} title={`1-line per item: ${title}`} rows='2' className='field-value' name={key} value={Array.isArray(value) ? value.join('\n') : JSON.stringify(value)}>
+      </textarea>
+      <span>Count: <b>{value ? value.length : 'n/a'}</b></span>
+    </div>
   } else if (type === 'string') {
-    el = <input type='text' onChange={_onChange} placeholder={title} title={title} className='field-value' name={key} value={value} />
+    el = <input type='text' onChange={_onChange} placeholder={title} title={title} className='field-value' name={key} value={value} minLength={fld.min ? fld.min : -Infinity} maxLength={fld.max ? fld.max : Infinity} />
   } else if (type === 'number') {
-    el = <input type='number' onChange={_onChange} placeholder={title} title={title} className='field-value' name={key} value={value} />
+    el = <input type='number' onChange={_onChange} placeholder={title} title={title} className='field-value' name={key} value={value} min={fld.min ? fld.min : -Infinity} max={fld.max ? fld.max : Infinity} step={fld.step ? fld.step : 1} />
   } else if (type === 'boolean') {
-    el = <input type='checkbox' onChange={_onChange} placeholder={title} title={title} className='field-value' name={key} value='checked' />
+    el = <input type='checkbox' onChange={_onChange} onClick={_onChange} placeholder={title} title={title} className='field-value' name={key} value='checked' />
   } else if (isEditableJson()) {
     el = <textarea onChange={_onChange} placeholder={title} title={title} className='field-value json-value' rows='7' value={JSON.stringify(value, null, 2)}></textarea>
   } else if (fld.children && fld.children.length >= 0) {
@@ -83,10 +97,11 @@ export function EditField({ key, title, type, value, onChange, path }) {
     return <em>{key}: {type} - unknown state</em>
   }
   // el.path = path;
-  return (<label>
+  return (<label className={`field field-${isNothing(value) ? 'undefined' : 'defined'} field-${type} ${fld.error ? 'field-error' : ''}`}>
     <span>{fld.label || ''}</span>
     &#160;
     {el}
+    {fld.error ? <div className='alert alert-danger'>{fld.error}</div> : ''}
   </label>)
 }
 

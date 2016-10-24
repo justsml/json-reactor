@@ -1,7 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
 import SortableTree, { toggleExpandedForAll } from 'react-sortable-tree';
-import {Branch, schemaToTree} from './Branch';
 import './style.less';
 
 export const mountTree = (root, data) => {

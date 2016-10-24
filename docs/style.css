@@ -66,7 +66,7 @@ input[type] {
   border: 1px solid #333;
 }
 
-.demo textarea {
+.demo textarea.json {
   font-family: 'Droid Mono', 'Courier', monospace;
   min-height: 145px;
   width: 48%;

@@ -8,11 +8,13 @@ import {render}             from 'react-dom';
 // import {KeyValueEditor}     from './src/editor/KeyValueEditor'
 //New
 // import {DataTreeFactory, mountTree} from './src/tree/DataTree'
-import {Tree}               from './src/tree'
-import {Schema}             from './src/schema/Schema'
+import {Tree}                 from './src/tree'
+import {Branch, schemaToTree} from './src/tree/Branch';
+import {buildSchema, Schema, buildSimpleSchema}  from './src/schema/Schema'
 
-
-export {Tree, Schema};
+export {Tree,
+  // exposed for testing debuggin
+  Schema, buildSchema, Branch, schemaToTree, buildSimpleSchema};
 
 export const loadTreeApp = ({data, draggable}) => {
   return render(

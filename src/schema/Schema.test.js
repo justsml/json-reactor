@@ -1,10 +1,10 @@
-require('babel-register');
+// require('babel-register');
 
 const test   = require('tape');
 const _      = require('lodash');
-const {buildSchema}               = require('./Schema');
-const {_findEnumTypes}            = require('./Schema');
-const {_filterTypesByProbability} = require('./Schema');
+const {buildSchema, buildSimpleSchema}  = require('./Schema');
+const {_findEnumTypes}                  = require('./Schema');
+const {_filterTypesByProbability}       = require('./Schema');
 
 const sampleIncomplete = [
   {id:1,name:'John',email:undefined,active:'y',signup:'2016-12-31T07:00:00.000Z',cancelled:'2017-01-01T07:00:00.000Z'},
@@ -91,7 +91,91 @@ test('schema: _filterTypesByProbability', t => {
   t.end();
 })
 
+test('can do naive schema guessing w/ buildSimpleSchema', t => {
+  const data = {
+    "flags": {
+      "undoLimit": 30,
 
+      "clientFieldsCss": {
+        "new-item": {"status": "NEW"},
+        "sc-item":  {"status": "SC"},
+        "limited-item": {"limited": true}
+      },
+
+      "orderTypes": [
+      ],
+      "shipViaOptions": "[ {label: 'Default', value: 'S'}, {label: 'Overnight', value:'O'}, {label: '2nd day', value:'2'}, {label: '3-day', value:'3'}, {label: 'Ground', value:'G'} ]",
+      "dropShip": {
+        "status": "always",
+        "description": "drop_ship_instructions"
+      },
+      "payments": {
+        "testing": true,
+        "merchantId": "cpt677444595145SB",
+        "callbackUrlPrefix": "https://b2bsales.patagonia.com/",
+        "filters": [
+          {
+            "context": "customer",
+            "key": "terms_code",
+            "includes": ["P001", "P007"]
+          }
+        ]
+      },
+      "showPrintAtsDateOption": false,
+      "poMaxLength": 20,
+      "importCsvDefaults": "{\"defaultKeyColumn\": 5, \"defaultQuantityColumn\": 7}",
+      "availabilityWarnings": false,
+      "availabilityRestrictsValidity": false,
+      "integrationFields": null,
+      "integrationFlagsNls": "scramble/nls/integrationFlags",
+      "exportAvailability": false,
+      "importCsv": true,
+      "orderHistory": true,
+      "discounts": true,
+      "separateInfinityStyle": false,
+      "hideRegister": false,
+      "altNameSeparator": " ",
+      "hideGender": false,
+      "assetManager": false,
+      "customCatalogBinding": false,
+      "customCatalogCrop": false,
+      "pageLevelNotes": false,
+      "documentLevelNotes": true,
+      "atsLabelMax": 99,
+      "constrainArriveOnByLastShip": false,
+      "importClientFile": false,
+      "exportPdfDefaults": {
+        "showFrontCover": true,
+        "showBackCover": true,
+        "includeCatalogLayout": true,
+        "includeGridLayout": true,
+        "includeSummary": true,
+        "includeMyNotes": true,
+        "showNotes": "mine",
+        "doubleSided": true,
+        "showPrice": "both"
+      },
+      "browseTagFilters": ["Module", "Family"],
+      "catalogBrands": null,
+      "orderStatus": {
+        "rowStates": ["open", "allocated", "picked", "shipped", "invoiced", "cancelled"],
+        "extraColumns": ["season"],
+        "hideColumns": ["season"]
+      },
+      "complexSubmitMessages": true,
+      "atsLogic": "catalog",
+      "atsAllowFuture": false,
+      "homeView": "dashboard", // dashboard or portal
+      "missingImage": "scramble/resources/images/missing.svg"
+    }
+  }
+  const schema = buildSimpleSchema(data);
+  t.ok(schema.flags, 'schema has \'flags\' node');
+  t.ok(schema.flags.undoLimit, 'schema has \'flags.undoLimit\' node');
+  t.equals(schema.flags.undoLimit.type, 'number', 'undoLimit has number type');
+  t.ok(schema.flags.orderTypes, 'schema has \'orderTypes\' node');
+  t.end();
+})
 
 
 function fixColArrayData({cols, data}) {
