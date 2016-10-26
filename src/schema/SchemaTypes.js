@@ -1,7 +1,7 @@
 const {isBoolean, isNumber, isDate} = require('../Util');
 const _                             = require('lodash');
 
-export const JS_DEFAULT_TYPE     = { 'type': 'object', default: null };
+export const JS_DEFAULT_TYPE     = { 'type': 'object',  default: null };
 export const JS_BOOLEAN_TYPE     = { 'type': 'boolean', default: null };
 export const JS_NUMBER_TYPE      = { 'type': 'number',  default: null, min: -Infinity, max: Infinity };
 export const JS_STRING_TYPE      = { 'type': 'string',  default: null, min: 0, max: Infinity };

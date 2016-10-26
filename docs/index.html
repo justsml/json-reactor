@@ -10,6 +10,17 @@
     <style type="text/css">
       /* initial css from parent app - setup to prevents FOUC while loading */
       .results-view { width: 720px; border: 1px solid #333; margin: 0 auto; }
+.rst__rowTitleWithSubtitle {
+  display: inline-block;
+}
+.jsonReactor  input[type=text] {
+  display:    block;
+}
+.jsonReactor  input[type=checkbox] {
+  width:      inherit;
+  height:     inherit;
+  border:     inherit;
+}
     </style>
   </head>
 
@@ -34,7 +45,7 @@
       </div>
 
       <div class="text-center">
-        <div id="app">
+        <div id="app" class="text-left">
         </div>
       </div>
     </div>
@@ -43,7 +54,484 @@
 
 var jsonReactor;
 const treeRoot = document.querySelector('#tree-root');
-const config = [
+const config = [{
+  "key": "flags",
+  "title": "flags",
+  "tooltip": "flags {object}",
+  "children": [
+    {
+      "key": "undoLimit",
+      "title": "undoLimit",
+      "tooltip": "undoLimit {object}",
+      "type": "number",
+      "value": 30
+    },
+    {
+      "key": "clientFieldsCss",
+      "title": "clientFieldsCss",
+      "tooltip": "clientFieldsCss {object}",
+      "children": [
+        {
+          "key": "new-item",
+          "title": "new-item",
+          "tooltip": "new-item {object}",
+          "children": [
+            {
+              "key": "status",
+              "title": "status",
+              "tooltip": "status {string}",
+              "value": "NEW",
+              "type": "string"
+            }
+          ],
+          "type": "object"
+        },
+        {
+          "key": "sc-item",
+          "title": "sc-item",
+          "tooltip": "sc-item {object}",
+          "children": [
+            {
+              "key": "status",
+              "title": "status",
+              "tooltip": "status {string}",
+              "value": "SC",
+              "type": "string"
+            }
+          ],
+          "type": "object"
+        },
+        {
+          "key": "limited-item",
+          "title": "limited-item",
+          "tooltip": "limited-item {object}",
+          "children": [
+            {
+              "key": "limited",
+              "title": "limited",
+              "tooltip": "limited {object}",
+              "type": "boolean",
+              "value": true
+            }
+          ],
+          "type": "object"
+        }
+      ],
+      "type": "object"
+    },
+    {
+      "key": "orderTypes",
+      "title": "orderTypes",
+      "tooltip": "orderTypes {string}",
+      "value": "{ label: 'My label', value: 'my_value' }",
+      "type": "string"
+    },
+    {
+      "key": "shipViaOptions",
+      "title": "shipViaOptions",
+      "tooltip": "shipViaOptions {json string}",
+      "value": "[ {label: 'Default', value: 'S'}, {label: 'Overnight', value:'O'}, {label: '2nd day', value:'2'}, {label: '3-day', value:'3'}, {label: 'Ground', value:'G'} ]",
+      "type": "string",
+    },
+    {
+      "key": "dropShip",
+      "title": "dropShip",
+      "tooltip": "dropShip {object}",
+      "children": [
+        {
+          "key": "status",
+          "title": "status",
+          "tooltip": "status {string}",
+          "value": "always",
+          "type": "string",
+          "enum": ["always", true, false]
+        },
+        {
+          "key": "description",
+          "title": "description",
+          "tooltip": "description {string}",
+          "value": "drop_ship_instructions",
+          "type": "string"
+        }
+      ],
+      "type": "object"
+    },
+    {
+      "key": "payments",
+      "title": "payments",
+      "tooltip": "payments {object}",
+      "children": [
+        {
+          "key": "testing",
+          "title": "testing",
+          "tooltip": "testing {object}",
+          "type": "boolean",
+          "value": true
+        },
+        {
+          "key": "merchantId",
+          "title": "merchantId",
+          "tooltip": "merchantId {string}",
+          "value": "xxxxxxxx",
+          "type": "string"
+        },
+        {
+          "key": "callbackUrlPrefix",
+          "title": "callbackUrlPrefix",
+          "tooltip": "callbackUrlPrefix {string}",
+          "value": "https://example.com/",
+          "type": "string"
+        },
+        {
+          "key": "filters",
+          "title": "filters",
+          "tooltip": "filters {array}",
+          "children": [
+            {
+              "context": "customer",
+              "key": "terms_code",
+              "title": "terms_code",
+              "includes": [
+                "P001",
+                "P007"
+              ]
+            }
+          ],
+          "type": "array"
+        }
+      ],
+      "type": "object"
+    },
+    {
+      "key": "showPrintAtsDateOption",
+      "title": "showPrintAtsDateOption",
+      "tooltip": "showPrintAtsDateOption {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "poMaxLength",
+      "title": "poMaxLength",
+      "tooltip": "poMaxLength {object}",
+      "type": "number",
+      "value": 50
+    },
+    {
+      "key": "importCsvDefaults",
+      "title": "importCsvDefaults",
+      "tooltip": "importCsvDefaults {string}",
+      "value": "{\"defaultKeyColumn\": 5, \"defaultQuantityColumn\": 7}",
+      "type": "string"
+    },
+    {
+      "key": "availabilityWarnings",
+      "title": "availabilityWarnings",
+      "tooltip": "availabilityWarnings {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "availabilityRestrictsValidity",
+      "title": "availabilityRestrictsValidity",
+      "tooltip": "availabilityRestrictsValidity {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "integrationFields",
+      "title": "integrationFields",
+      "tooltip": "integrationFields {object}",
+      "value": null,
+      "type": "object"
+    },
+    {
+      "key": "integrationFlagsNls",
+      "title": "integrationFlagsNls",
+      "tooltip": "integrationFlagsNls {string}",
+      "value": "scramble/nls/integrationFlags",
+      "type": "string"
+    },
+    {
+      "key": "exportAvailability",
+      "title": "exportAvailability",
+      "tooltip": "exportAvailability {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "importCsv",
+      "title": "importCsv",
+      "tooltip": "importCsv {object}",
+      "type": "boolean",
+      "value": true
+    },
+    {
+      "key": "orderHistory",
+      "title": "orderHistory",
+      "tooltip": "orderHistory {object}",
+      "type": "boolean",
+      "value": true
+    },
+    {
+      "key": "discounts",
+      "title": "discounts",
+      "tooltip": "discounts {object}",
+      "type": "boolean",
+      "value": true
+    },
+    {
+      "key": "separateInfinityStyle",
+      "title": "separateInfinityStyle",
+      "tooltip": "separateInfinityStyle {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "hideRegister",
+      "title": "hideRegister",
+      "tooltip": "hideRegister {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "altNameSeparator",
+      "title": "altNameSeparator",
+      "tooltip": "altNameSeparator {string}",
+      "value": " ",
+      "type": "string",
+      "max": 1,
+      "enum": [" ", ";", ","]
+    },
+    {
+      "key": "hideGender",
+      "title": "hideGender",
+      "tooltip": "hideGender {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "assetManager",
+      "title": "assetManager",
+      "tooltip": "assetManager {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "customCatalogBinding",
+      "title": "customCatalogBinding",
+      "tooltip": "customCatalogBinding {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "customCatalogCrop",
+      "title": "customCatalogCrop",
+      "tooltip": "customCatalogCrop {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "pageLevelNotes",
+      "title": "pageLevelNotes",
+      "tooltip": "pageLevelNotes {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "documentLevelNotes",
+      "title": "documentLevelNotes",
+      "tooltip": "documentLevelNotes {object}",
+      "type": "boolean",
+      "value": true
+    },
+    {
+      "key": "atsLabelMax",
+      "title": "atsLabelMax",
+      "tooltip": "atsLabelMax {object}",
+      "type": "number",
+      "value": 99
+    },
+    {
+      "key": "constrainArriveOnByLastShip",
+      "title": "constrainArriveOnByLastShip",
+      "tooltip": "constrainArriveOnByLastShip {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "importClientFile",
+      "title": "importClientFile",
+      "tooltip": "importClientFile {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "exportPdfDefaults",
+      "title": "exportPdfDefaults",
+      "tooltip": "exportPdfDefaults {object}",
+      "children": [
+        {
+          "key": "showFrontCover",
+          "title": "showFrontCover",
+          "tooltip": "showFrontCover {object}",
+          "type": "boolean",
+          "value": true
+        },
+        {
+          "key": "showBackCover",
+          "title": "showBackCover",
+          "tooltip": "showBackCover {object}",
+          "type": "boolean",
+          "value": true
+        },
+        {
+          "key": "includeCatalogLayout",
+          "title": "includeCatalogLayout",
+          "tooltip": "includeCatalogLayout {object}",
+          "type": "boolean",
+          "value": true
+        },
+        {
+          "key": "includeGridLayout",
+          "title": "includeGridLayout",
+          "tooltip": "includeGridLayout {object}",
+          "type": "boolean",
+          "value": true
+        },
+        {
+          "key": "includeSummary",
+          "title": "includeSummary",
+          "tooltip": "includeSummary {object}",
+          "type": "boolean",
+          "value": true
+        },
+        {
+          "key": "includeMyNotes",
+          "title": "includeMyNotes",
+          "tooltip": "includeMyNotes {object}",
+          "type": "boolean",
+          "value": true
+        },
+        {
+          "key": "showNotes",
+          "title": "showNotes",
+          "tooltip": "showNotes {string}",
+          "value": "mine",
+          "type": "string"
+        },
+        {
+          "key": "doubleSided",
+          "title": "doubleSided",
+          "tooltip": "doubleSided {object}",
+          "type": "boolean",
+          "value": true
+        },
+        {
+          "key": "showPrice",
+          "title": "showPrice",
+          "tooltip": "showPrice {string}",
+          "value": "both",
+          "type": "string"
+        }
+      ],
+      "type": "object"
+    },
+    {
+      "key": "browseTagFilters",
+      "title": "browseTagFilters",
+      "tooltip": "browseTagFilters {array}",
+      "value": [
+        "Module",
+        "Family"
+      ],
+      "type": "array"
+    },
+    {
+      "key": "catalogBrands",
+      "title": "catalogBrands",
+      "tooltip": "catalogBrands {object}",
+      "value": null,
+      "type": "object"
+    },
+    {
+      "key": "orderStatus",
+      "title": "orderStatus",
+      "tooltip": "orderStatus {object}",
+      "children": [
+        {
+          "key": "rowStates",
+          "title": "rowStates",
+          "tooltip": "rowStates {array}",
+          "value": [
+            "open",
+            "allocated",
+            "picked",
+            "shipped",
+            "invoiced",
+            "cancelled"
+          ],
+          "type": "array"
+        },
+        {
+          "key": "extraColumns",
+          "title": "extraColumns",
+          "tooltip": "extraColumns {array}",
+          "value": [
+            "season"
+          ],
+          "type": "array"
+        },
+        {
+          "key": "hideColumns",
+          "title": "hideColumns",
+          "tooltip": "hideColumns {array}",
+          "value": [
+            "season"
+          ],
+          "type": "array"
+        }
+      ],
+      "type": "object"
+    },
+    {
+      "key": "complexSubmitMessages",
+      "title": "complexSubmitMessages",
+      "tooltip": "complexSubmitMessages {object}",
+      "type": "boolean",
+      "value": true
+    },
+    {
+      "key": "atsLogic",
+      "title": "atsLogic",
+      "tooltip": "atsLogic {string}",
+      "value": "catalog",
+      "type": "string"
+    },
+    {
+      "key": "atsAllowFuture",
+      "title": "atsAllowFuture",
+      "tooltip": "atsAllowFuture {object}",
+      "type": "boolean",
+      "value": false
+    },
+    {
+      "key": "homeView",
+      "title": "homeView",
+      "tooltip": "homeView {string}",
+      "value": "dashboard",
+      "type": "string"
+    },
+    {
+      "key": "missingImage",
+      "title": "missingImage",
+      "tooltip": "missingImage {string}",
+      "value": "scramble/resources/images/missing.svg",
+      "type": "string"
+    }
+  ],
+  "type": "object"
+}];
+/*[
   {key: 'title', type: 'string', title: 'Site Title', subtitle: 'Title:* '},//, value: 'json-reactor'},
   {key: 'description', type: 'string', title: 'Description', subtitle: 'Desc.: '},//, value: 'Best Config & JSON Editor In ReactJS'},
   {key: 'awesomeness', title: 'How Awesome is json-reactor?', type: 'string',
@@ -68,7 +556,7 @@ const config = [
     ]
   }
 ];
-
+*/
 /*
 function riskyJsonParser(json) {
   eval('var feelingLucky = ' + json);
@@ -78,10 +566,13 @@ function riskyJsonParser(json) {
 
 function loadTree() {
   const jsonText = document.querySelector('textarea.json-string')
-  let jsonInput = localStorage.getItem('jsonReactorTree') || null;
+  let jsonObj, jsonInput = jsonText ? jsonText.value : '';
   try {
-    jsonInput = jsonText && jsonText.value && jsonText.value.length > 5 ? JSON.parse(jsonText.value) : config;
-    localStorage.setItem('jsonReactorTree', JSON.stringify(jsonInput))
+    if (jsonInput.length < 6) {
+      jsonInput = localStorage.getItem('jsonReactorTree') || jsonInput;
+    }
+    jsonObj = jsonInput && jsonInput.length > 5 ? JSON.parse(jsonInput) : config;
+    localStorage.setItem('jsonReactorTree', JSON.stringify(jsonObj))
     //let schema = JsonReactor.Schema(jsonInput);
     //jsonReactor  = JsonReactor.create(document.querySelector('.results-view'), schema)
     // ^^ convert to schema ^^
@@ -94,7 +585,7 @@ function loadTree() {
     }
   }
   try {
-    jsonText.value = JSON.stringify(jsonInput, null, 2)
+    //jsonText.value = JSON.stringify(jsonInput, null, 2)
     window.treeRootRef = JsonReactor.loadTreeApp({data: config, draggable: false});
   } catch(ex) {
     console.error('Failed to serialize or create component', ex.stack, ex);

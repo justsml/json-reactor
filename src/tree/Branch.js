@@ -92,9 +92,9 @@ const schemaToTree = (schema) => {
   return Object.keys(schema)
   .map(key => {
     let fld  = schema[key];
-    let type = isValidField(fld) ? fld.type : null;
+    let type = fld && isValidField(fld) ? fld.type : null;
     type = type === null && typeof fld === 'object' ? 'object' : 'null';
-    let children = typeof fld === 'object' && !['object'].includes(fld.type)
+    let children = fld && typeof fld === 'object' && !['object'].includes(fld.type)
       ? schemaToTree(fld) : undefined;
     return Branch(Object.assign({key, children, type}, fld))
   })

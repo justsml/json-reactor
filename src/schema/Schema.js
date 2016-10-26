@@ -24,15 +24,25 @@ export function buildSimpleSchema(data) {
     console.warn('unexpected key/array passed to buildSimpleSchema', seq, data, '\n\n###arguments', arguments);
     return data;
   }
-  return data.map((key, idx) => {
+  return seq.map((key, idx) => {
     let val = data[key];
-    let typ = Array.isArray(val) ? 'array' : typeof val;
-    if (val === null || ['array', 'string', 'number', 'undefined'].includes(typ)) {
-      val = guessType(val); // basic type
-    } else {// if (['array'].includes(typ)) {
-      val = buildSimpleSchema(val);
+    let typ = guessType(val);
+    if (val === null || ['array', 'string', 'number', 'undefined'].includes(typ.type)) {
+      // val = guessType(val); // basic type
+    } else if (val && ['object'].includes(typ.type)) {
+      val = buildSimpleSchema(val);   /// <<<< RECURSIVE SHIZNIT!
+    } else {
+      // val = JS_DEFAULT_TYPE;
     }
-    return val;
+    return Object.assign({}, typ, {
+      // name:     key,
+      title:    key,
+      tooltip:  `${key} {${typ.type}}`,
+      // _type:    typ.type,
+      typeOf:   typeof val,
+      // default:  typ.type === 'object' ? undefined : val,
+      value:    val,
+    });
   });
 }
 

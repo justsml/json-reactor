@@ -9,10 +9,14 @@
     "url": "https://github.com/justsml/json-reactor/issues"
   },
   "homepage": "https://github.com/justsml/json-reactor",
+  "ava": {
+    "require": ["babel-register"],
+    "babel": "inherit"
+  },
   "babel": {
     "plugins": [
-      "transform-object-rest-spread",
-      "transform-export-extensions"
+      "transform-export-extensions",
+      "transform-object-rest-spread"
     ],
     "presets": [
       "es2015",
@@ -67,5 +71,10 @@
     "tap-summary": "3.0.1",
     "tape": "^4.6.2",
     "webpack": "^1.13.2"
+  },
+  "dependencies": {
+    "ava": "^0.16.0",
+    "babel-plugin-transform-export-extensions": "^6.8.0",
+    "babel-preset-latest": "^6.16.0"
   }
 }

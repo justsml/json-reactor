@@ -144,7 +144,7 @@ const patterns = {
   number: [/^\$?[\.,\d]*$/]
 }
 export const isBoolean = str => typeof str !== 'object' && (str === true || str === false || patterns.boolean.some(p => p.test(String(str))));
-export const isNumber  = str => typeof str !== 'object' && (_.isFinite(str) || patterns.number.some(p => p.test(String(str))));
+export const isNumber  = str => typeof str === 'number' || _.isNumber(str) //|| patterns.number.some(p => p.test(String(str)));
 export const isDate    = str => toDate(str) ? true : false;
 export const toDate    = str => {
   if (typeof str === 'object' && str.toISOString)  { return true;  }
