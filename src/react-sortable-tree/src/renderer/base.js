@@ -129,7 +129,7 @@ NodeRendererDefault.propTypes = {
     // Drag and drop API functions
     // Drag source
     connectDragPreview: PropTypes.func.isRequired,
-    connectDragSource:  PropTypes.func.isRequired,
+    connectDragSource:  PropTypes.func,
     isDragging:         PropTypes.bool.isRequired,
     draggedNode:        PropTypes.object,
     // Drop target

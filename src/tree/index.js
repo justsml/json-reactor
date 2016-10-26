@@ -1,10 +1,10 @@
 // import {JS_TYPES, SIMPLE_TYPES} from '../schema/SchemaTypes'
 import React, { Component, PropTypes } from 'react'
 import SortableTree, { toggleExpandedForAll } from 'react-sortable-tree'
-import './style.less'
+// import './style.less'
 import styles from './style.less'
 import {EditField, getArrayIndex3D, getTreeValue} from './EditField'
-// import {FieldRenderer} from './renderer/FieldRenderer'
+import {FieldRenderer} from './renderer/FieldRenderer'
 
 export class Tree extends Component {
   constructor(props) {
@@ -16,6 +16,7 @@ export class Tree extends Component {
     this.onChange       = this.onChange.bind(this)
     this.saveChanges    = this.saveChanges.bind(this)
 
+
     // const renderDepthTitle = ({ path }) => `Depth: ${path.length}`
 
     this.state = {
@@ -23,7 +24,7 @@ export class Tree extends Component {
       searchFocusIndex: 0,
       searchFoundCount: null,
       draggable:        props.draggable || false,
-      treeData:         props.data,
+      treeData:         this.applySchema(props.data),
     }
   }
 
@@ -104,7 +105,7 @@ export class Tree extends Component {
       searchFocusIndex,
       searchFoundCount,
     } = this.state
-    treeData = this.applySchema(treeData)
+    // treeData = this.applySchema(treeData)
 
     // const alertNodeInfo = ({
     //   node,
@@ -167,6 +168,7 @@ export class Tree extends Component {
               maxDepth={5}
               searchQuery={searchString}
               searchFocusOffset={searchFocusIndex}
+              nodeContentRenderer={FieldRenderer}
               searchFinishCallback={matches =>
                 this.setState({
                   searchFoundCount: matches.length,

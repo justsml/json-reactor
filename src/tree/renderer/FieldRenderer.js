@@ -119,15 +119,15 @@ FieldRenderer.propTypes = {
 
     // Drag and drop API functions
     // Drag source
-    connectDragPreview: PropTypes.func.isRequired,
-    connectDragSource:  PropTypes.func.isRequired,
-    isDragging:         PropTypes.bool.isRequired,
+    connectDragPreview: PropTypes.func,
+    connectDragSource:  PropTypes.func,
+    isDragging:         PropTypes.bool,
     draggedNode:        PropTypes.object,
     // Drop target
-    isOver:  PropTypes.bool.isRequired,
-    canDrop: PropTypes.bool.isRequired,
+    isOver:  PropTypes.bool,
+    canDrop: PropTypes.bool,
 
-    canDrag:        PropTypes.oneOfType([ PropTypes.func, PropTypes.bool ]).isRequired,
+    canDrag:        PropTypes.oneOfType([ PropTypes.func, PropTypes.bool ]),
     rowFactory:     PropTypes.func,
     buttonFactory:  PropTypes.func,
 
